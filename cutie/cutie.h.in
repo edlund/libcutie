@@ -1,0 +1,612 @@
+/* cutie - C UTilitIEs
+ * Copyright (c) 2011, Erik Edlund <erik.o.edlund@gmail.com>
+ * 
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 
+ *  * Redistributions of source code must retain the above copyright notice,
+ *  this list of conditions and the following disclaimer.
+ * 
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *  this list of conditions and the following disclaimer in the documentation
+ *  and/or other materials provided with the distribution.
+ * 
+ *  * Neither the name of Erik Edlund, nor the names of its contributors may
+ *  be used to endorse or promote products derived from this software without
+ *  specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef _CUTIE_H_
+#define _CUTIE_H_
+
+/**
+ * @file cutie.h
+ * @brief C UTilitIEs
+ */
+
+/**
+ * @defgroup config config
+ * Global cutie configuration.
+ * @{
+ */
+
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+/// ./configure --enable-aliases
+#define CUTIE_ENABLE_ALIASES @ENABLE_ALIASES@
+
+/// ./configure --enable-abstract
+#define CUTIE_ENABLE_ABSTRACT @ENABLE_ABSTRACT@
+
+#ifndef CUTIE_STDC
+#define CUTIE_STDC 1
+#endif
+#if CUTIE_STDC && ( \
+		!defined(__STDC__) || __STDC__ == 0 || \
+		!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L \
+	)
+#error "An ISO C99 compiler and preprocessor is required."
+#endif
+
+/**@}*/ //group:config
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @defgroup cpp cpp
+ * C preprocessor utilities.
+ * @{
+ */
+
+/**
+ * Evaluator for CPP_STR().
+ */
+#define _CPP_STR(s) #s
+
+/**
+ * Stringize @p s.
+ */
+#define CPP_STR(s) _CPP_STR(s)
+
+/**
+ * Evaluator for CPP_CAT().
+ */
+#define _CPP_CAT(a, b) a##b
+
+/**
+ * Concat @p a with @p b.
+ */
+#define CPP_CAT(a, b) _CPP_CAT(a, b)
+
+/**
+ * Mark @p Var as an unused variable in order to avoid
+ * compiler warnings.
+ */
+#define UNUSED(Var) \
+	(void)Var
+
+/**@}*/ //group:cpp
+
+/**
+ * @defgroup class class
+ * OOP utilities.
+ * @{
+ */
+
+/**
+ * Declare a class named @p Name and list its data members.
+ * All classes must inherit another class specified by @p
+ * Parent. If no suitable user defined class exists which
+ * can be used as parent, #Object must be used.
+ */
+#define class_begin_def(Name, Parent) \
+	extern struct CPP_CAT(_mtbl_, Name) CPP_CAT(_mtbl_, Name); \
+	extern struct _metadata_Class CPP_CAT(_metadata_, Name); \
+	struct CPP_CAT(_, Name)* CPP_CAT(new_, Name)( \
+		struct CPP_CAT(_, Name)* ptr, ...); \
+	void CPP_CAT(Name, _Constructor)(void* const _self, va_list* _args); \
+	void CPP_CAT(Name, _Destructor)(void* const _self); \
+	void CPP_CAT(_populate_mtbl_, Name)(struct CPP_CAT(_mtbl_, Name)* \
+		const mtbl, const char* const name); \
+	typedef struct CPP_CAT(_, Name) { \
+		Parent Parent;
+/**
+ * @endof class_begin_def().
+ */
+#define class_end_def(Name, Parent) \
+	} Name;
+
+/**
+ * Declare the method table for the class @p Name. All
+ * methods declared are "virtual" and may be overridden by
+ * a sub class. An entry for the method table is simply a
+ * function pointer.
+ */
+#define class_begin_methods(Name, Parent) \
+	struct CPP_CAT(_mtbl_, Name) { \
+		struct CPP_CAT(_mtbl_, Parent) Parent;
+/**
+ * @endof class_begin_methods().
+ */
+#define class_end_methods(Name, Parent) \
+	};
+
+/**
+ * Used to declare the self param for methods with a little
+ * less typing.
+ */
+#define self(Class) \
+	Class* const self
+
+/**
+ * Get the method table declared for @p Class for the given
+ * @p Instance. For calling a method use class_call0() or
+ * class_calln().
+ * 
+ * Specifying an invalid @p Class for the given @p Instance
+ * will result in undefined behavior at run-time.
+ * 
+ * Monkey patching is theoretically possible by modifying
+ * the method table for a class directly, but it is probably
+ * a terrible idea which should be avoided. Special care
+ * needs to be taken in a multi-threaded environment to avoid
+ * race conditions with new_X() calls when the method table
+ * for a class is not yet populated.
+ */
+#define class_mtbl(Instance, Class) \
+	((struct CPP_CAT(_mtbl_, Class)*)((Object*)Instance)->_mtbl)
+
+/**
+ * Call a method taking no parameters, declared for @p Class,
+ * with the given @p Instance.
+ */
+#define class_call0(Instance, Class, Method) \
+	class_mtbl(Instance, Class)->Method((Class*)Instance)
+
+/**
+ * Call a method taking one or more parameters, declared
+ * for @p Class on the given @p Instance.
+ * 
+ * Calling class_calln() without method arguments would violate
+ * 6.10.3p4 of ISO C99.
+ * 
+ * http://www.open-std.org/jtc1/sc22/WG14/www/docs/n1256.pdf
+ */
+#define class_calln(Instance, Class, Method, ...) \
+	class_mtbl(Instance, Class)->Method((Class*)Instance, __VA_ARGS__)
+
+/**
+ * Declare structures and functions related to the class
+ * @p Name and specify how the method table will be populated.
+ * Put class_begin_impl() / class_end_impl() in an
+ * implementation file (C source file).
+ * 
+ * Notes about _populate_mtbl_X():
+ * 
+ * - Threads could get into a race about assigning the methods
+ * for a class, but since all threads will perform exactly
+ * the same actions the result will be consistent.
+ * 
+ * - The method table being handled is assumed to have all
+ * function pointers set to @p NULL before new_X() has been
+ * called at least once. Since method tables are initialized
+ * from bottom to top, this makes it possible to override
+ * a parent method for a child class. Each method table is
+ * assigned to X_Init, which will implicitly set all function
+ * pointers to @p NULL. See #Object_Init for more info.
+ * 
+ * Notes about new_X():
+ * 
+ * - If @p ptr is NULL memory will be allocated using
+ * memalloc(). Use memfree() to free the ptr. NULL will be
+ * returned if the allocation failed.
+ */
+#define class_begin_impl(Name, Parent) \
+	struct CPP_CAT(_mtbl_, Name) CPP_CAT(_mtbl_, Name) = CPP_CAT(Name, _Init); \
+	struct _metadata_Class CPP_CAT(_metadata_, Name) = { \
+		._parent = &CPP_CAT(_metadata_, Parent), \
+		._name = CPP_STR(Name), \
+		._populated = 0, \
+		._size = sizeof(Name) \
+	}; \
+	Name* CPP_CAT(new_, Name)(Name* ptr, ...) \
+	{ \
+		Name* obj = (Name*) \
+			(ptr? ptr: memalloc(sizeof(Name))); \
+		if (obj) { \
+			if (!CPP_CAT(_metadata_, Name)._populated) { \
+				CPP_CAT(_populate_mtbl_, Name)(&CPP_CAT(_mtbl_, Name), \
+					CPP_STR(Name)); \
+				CPP_CAT(_metadata_, Name)._populated = true; \
+			} \
+			class_qcast(obj, Object)->_mtbl = (struct _mtbl_Object*) \
+				&CPP_CAT(_mtbl_, Name); \
+			class_qcast(obj, Object)->_metadata = &CPP_CAT(_metadata_, Name); \
+			va_list args; \
+			va_start(args, ptr); \
+			class_mtbl(obj, Object)->Constructor(obj, &args); \
+			va_end(args); \
+		} \
+		return obj; \
+	} \
+	void CPP_CAT(_populate_mtbl_, Name)(struct CPP_CAT(_mtbl_, Name)* \
+		const mtbl, const char* const name) \
+	{ \
+		class_method_impl(Object, Constructor, CPP_CAT(Name, _Constructor)) \
+		class_method_impl(Object, Destructor, CPP_CAT(Name, _Destructor))
+/**
+ * @endof class_begin_impl().
+ */
+#define class_end_impl(Name, Parent) \
+		CPP_CAT(_populate_mtbl_, Parent)(&mtbl->Parent, name); \
+	}
+
+/**
+ * Set @p Method on @p Class to @p Impl.
+ * 
+ * @scope class_begin_impl() => class_end_impl()
+ */
+#define class_method_impl(Class, Method, Impl) \
+	if (!((struct CPP_CAT(_mtbl_, Class)*)mtbl)->Method) { \
+		((struct CPP_CAT(_mtbl_, Class)*)mtbl)->Method = Impl; \
+	}
+
+/**
+ * Declare the constructor for the class @p Name.
+ */
+#define class_begin_ctor(Name, Parent) \
+	void CPP_CAT(Name, _Constructor)(void* const _self, va_list* _args) \
+	{ \
+		CPP_CAT(Parent, _Constructor)(_self, _args); \
+		Name* const self = (Name*)_self; \
+		(void)self;
+/**
+ * @endof class_begin_ctor().
+ */
+#define class_end_ctor(Name, Parent) \
+	}
+
+/**
+ * Shift of a constructor argument of the given @p Type.
+ * 
+ * @scope class_begin_ctor() => class_end_ctor()
+ */
+#define class_ctor_arg(Type) \
+	va_arg(*_args, Type)
+
+/**
+ * Declare the destructor for the class @p Name.
+ */
+#define class_begin_dtor(Name, Parent) \
+	void CPP_CAT(Name, _Destructor)(void* const _self) \
+	{ \
+		Name* const self = (Name*)_self; \
+		(void)self;
+/**
+ * @endof class_begin_dtor().
+ */
+#define class_end_dtor(Name, Parent) \
+		CPP_CAT(Parent, _Destructor)(_self); \
+	}
+
+/**
+ * @defgroup Object Object
+ * Structures and functions related to Object, which is the
+ * topmost parent of all classes.
+ * @{
+ */
+
+struct _mtbl_Object;
+struct _metadata_Class;
+
+/**
+ * Topmost parent of all classes.
+ */
+typedef struct _Object {
+	/// Method table for the class.
+	const struct _mtbl_Object* _mtbl;
+	/// Metadata about the class.
+	const struct _metadata_Class* _metadata;
+} Object;
+
+/**
+ * Each class will have an associated _metadata_Class
+ * structure which each object of that class will have a
+ * pointer to. This is required in order to implement certain
+ * RTTI features.
+ */
+struct _metadata_Class {
+	/// The metadata for the parent of the described class.
+	/// Will be NULL for #Object.
+	const struct _metadata_Class* const _parent;
+	/// The name of the described class.
+	const char* const _name;
+	/// The size in bytes of the described class.
+	const size_t _size;
+	/// Determine if the method table for the described class
+	/// has been populated.
+	bool _populated;
+};
+
+/**
+ * Metadata about Object.
+ */
+extern struct _metadata_Class _metadata_Object;
+
+/**
+ * Method table for Object.
+ */
+struct _mtbl_Object {
+	/// Called when a new object is created.
+	void (*Constructor)(void* const _self, va_list* _args);
+	/// Should be explicitly called before an object is destroyed.
+	void (*Destructor)(void* const _self);
+	/// Called on the replica when an object is cloned.
+	void (*Clone)(Object* self, Object* original);
+};
+
+/**
+ * Initialize the method table for Object to default values
+ * if necessary.
+ */
+void _populate_mtbl_Object(struct _mtbl_Object* mtbl,
+	const char* const name);
+
+/**
+ * Object constructor.
+ */
+void Object_Constructor(void* const _self, va_list* _args);
+
+/**
+ * Object destructor.
+ */
+void Object_Destructor(void* const _self);
+
+/**
+ * Default no-op which is called on the new object created
+ * by clone() unless a sub class overrides it.
+ */
+void Object_Clone(self(Object), Object* original);
+
+/**@}*/ //group:Object
+
+/**
+ * Initializes the method table for Object.
+ * 
+ * All sub-classes needs to define
+ * @code
+ * #define ClassName_Init { ParentName_Init }
+ * @endcode
+ * in order to make sure that all method tables for the class
+ * are correctly initialized.
+ * 
+ * For example, if Test inherited Object, it would be required
+ * to define
+ * @code
+ * #define Test_Init { Object_Init }
+ * @endcode
+ * before class_begin_impl() / class_end_impl() for Test is
+ * encountered (preferably in a header file).
+ * 
+ * Requires @p -Wno-missing-field-initializers when compiling
+ * against @p -Wall and @p -Wextra with gcc and/or clang.
+ */
+#define Object_Init { NULL }
+
+/**
+ * Get the class name for the given @p Instance.
+ */
+#define class_name(Instance) \
+	((Object*)Instance)->_metadata->_name
+
+/**
+ * Perform a quick, but unsafe/unchecked, cast of @p Instance
+ * to @p Class.
+ */
+#define class_qcast(Instance, Class) \
+	((Class*)Instance)
+
+/**
+ * Perform a "safe" cast of @p Instance to @p Class, @p NULL
+ * will be returned if the cast is impossible.
+ * 
+ * Make sure not to violate strict aliasing rules when using
+ * class_cast().
+ */
+#define class_cast(Instance, Class) \
+	(Class*)_class_cast((Object*)Instance, &CPP_CAT(_metadata_, Class))
+
+/**
+ * Backend for class_cast().
+ */
+void* _class_cast(Object* const instance,
+	const struct _metadata_Class* const target);
+
+/**
+ * Determine if the given @p Instance is an instance of @p
+ * Class.
+ */
+#define class_instanceof(Instance, Class) \
+	(class_cast(Instance, Class) != NULL)
+
+/**
+ * Clone the given object @p Original. A pointer to an
+ * identical object will be returned. Each class can
+ * optionally override Object_Clone() to deal with members
+ * which needs special handling, like for example a pointer
+ * or a resource which can not be shared between multiple
+ * objects. It will be called for the created clone.
+ * 
+ * @p NULL will be returned if memory can not be created for
+ * the clone.
+ */
+#define class_clone(Original) \
+	_class_clone((Object*)Original)
+
+/**
+ * Backend for class_clone().
+ */
+Object* _class_clone(Object* const original);
+
+/**
+ * Backend for delete_Object().
+ */
+#define _delete_Object(Deallocator, Instance) \
+	do { \
+		if (Instance) { \
+			class_call0(Instance, Object, Destructor); \
+			Deallocator(Instance); \
+			Instance = NULL; \
+		} \
+	} while (0)
+
+/**
+ * Delete the given heap allocated @p Instance. If @p Instance
+ * is a null pointer, no action occurs. memfree() is used to
+ * free the pointer, use _delete_Object() to specify another
+ * deallocation method.
+ */
+#define delete_Object(Instance) \
+	_delete_Object(memfree, Instance)
+
+#if CUTIE_ENABLE_ALIASES
+/**
+ * @defgroup aliases aliases
+ * Aliases for commonly used macros and functions.
+ * @{
+ */
+
+/**
+ * @alias class_call0().
+ */
+#define call0(Instance, Class, Method) \
+	class_call0(Instance, Class, Method)
+
+/**
+ * @alias class_calln().
+ */
+#define calln(Instance, Class, Method, ...) \
+	class_calln(Instance, Class, Method, __VA_ARGS__)
+
+/**
+ * @alias class_instanceof().
+ */
+#define instanceof(Instance, Class) \
+	class_instanceof(Instance, Class)
+
+/**
+ * @alias class_clone().
+ */
+#define clone(Original) \
+	class_clone(Original)
+
+/**@}*/ //group:aliases
+#endif // CUTIE_ENABLE_ALIASES
+
+#if CUTIE_ENABLE_ABSTRACT
+/**
+ * @defgroup abstract abstract
+ * Support for abstract methods. This feature is of limited
+ * use since instantiation of an abstract class only can
+ * be detected and handled at run time.
+ * @{
+ */
+
+/**
+ * Mark a @p Method on @p Class as abstract.
+ * 
+ * @scope class_begin_impl() => class_end_impl()
+ */
+#define class_method_abstract(Class, Method) \
+	if (!((struct CPP_CAT(_mtbl_, Class)*)mtbl)->Method) { \
+		_classAbstractHandler(name, CPP_STR(Class), CPP_STR(Method)); \
+	}
+
+/**
+ * Default abstract handler which is called when someone
+ * tries to instantiate an abstract class.
+ */
+void ClassDefaultAbstractHandler(const char* const name, const char*
+	const class, const char* const method);
+
+/**
+ * Signature for abstract handlers.
+ */
+typedef void (*ClassAbstractHandler)(const char* const, const char* const,
+	const char* const);
+
+/**
+ * Pointer to the abstract handler.
+ */
+extern ClassAbstractHandler _classAbstractHandler;
+
+/**
+ * Replace the default abstract handler.
+ */
+ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler);
+
+/**@}*/ //group:abstract
+#endif
+
+/**@}*/ //group:class
+
+/**
+ * @defgroup std std
+ * Standard implementations of support functions.
+ * @{
+ */
+
+/**
+ * Duplicate @p s.
+ * 
+ * @memfree
+ */
+char* strdup(const char* const s);
+
+/**
+ * Duplicate @p n bytes of @p s.
+ * 
+ * @memfree
+ */
+char* strndup(const char* const s, const size_t n);
+
+/**
+ * Handles irrecoverable errors.
+ */
+void panic(const char* const format, ...);
+
+/**
+ * Allocate @p n bytes, usually a wrapper for #malloc. NULL
+ * is returned if the request could not be satisfied.
+ */
+void* memalloc(const size_t n);
+
+/**
+ * Free a pointer allocated by memalloc(), usually a wrapper
+ * for #free.
+ */
+void memfree(void* p);
+
+/**@}*/ //group:std
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
