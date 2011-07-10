@@ -45,7 +45,7 @@ Configuring, compiling, testing and installing cutie can then be as simple as:
     libcutie$ ./configure && make && make check && sudo -k make install
 
 You can then #include cutie.h and link with -lcutie and -lcutie.std. For more
-options, simply run `./configure --help'.
+options, simply run `./configure --help`.
 
 ## Getting started
 
@@ -53,7 +53,7 @@ Have a look at the examples/ and tests/.
 
 ## Uninstalling cutie
 
-Use `make uninstall' to undo everything `make install' did:
+Use `make uninstall` to undo everything `make install` did:
 
     libcutie$ sudo -k make uninstall
 
