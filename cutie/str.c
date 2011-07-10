@@ -31,7 +31,7 @@
 
 char* strdup(const char* const s)
 {
-	char* d = (char*)(s? malloc(strlen(s) + 1): NULL);
+	char* d = (char*)(s? memalloc(strlen(s) + 1): NULL);
 	return d? strcpy(d, s): d;
 }
 
@@ -41,7 +41,7 @@ char* strndup(const char* const s, const size_t n)
 	if (n < l && n > 0) {
 		l = n;
 	}
-	char* d = (char*)(s? malloc(l + 1): NULL);
+	char* d = (char*)(s? memalloc(l + 1): NULL);
 	if (d) {
 		d[l] = '\0';
 		memcpy(d, s, l);
