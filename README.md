@@ -44,8 +44,8 @@ Configuring, compiling, testing and installing cutie can then be as simple as:
     libcutie$ autoreconf -i
     libcutie$ ./configure && make && make check && sudo -k make install
 
-You can then #include cutie.h and link with -lcutie and -lcutie.std. For more
-options, simply run `./configure --help`.
+You can then #include cutie.h and link with -lcutie. For more options, simply
+run `./configure --help`.
 
 ## Getting started
 

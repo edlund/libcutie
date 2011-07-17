@@ -37,21 +37,17 @@ check_class_SOURCES = check_class.c \
 	check_class_filewidget.c \
 	check_class_integerwidget.c
 check_class_LDADD = \
-	$(top_builddir)/cutie/libcutie.la \
-	$(top_builddir)/cutie/libcutie.std.la
+	$(top_builddir)/cutie/libcutie.la
 
 check_cpp_SOURCES = check_cpp.c
 check_cpp_LDADD = \
-	$(top_builddir)/cutie/libcutie.la \
-	$(top_builddir)/cutie/libcutie.std.la
+	$(top_builddir)/cutie/libcutie.la
 
 check_panic_SOURCES = check_panic.c
 check_panic_LDADD = \
-	$(top_builddir)/cutie/libcutie.la \
-	$(top_builddir)/cutie/libcutie.std.la
+	$(top_builddir)/cutie/libcutie.la
 
 check_str_SOURCES = check_str.c
 check_str_LDADD = \
-	$(top_builddir)/cutie/libcutie.la \
-	$(top_builddir)/cutie/libcutie.std.la
+	$(top_builddir)/cutie/libcutie.la
 

@@ -15,6 +15,5 @@ example_SOURCES = \
 	robot.c \
 	replicator.c
 example_LDADD = \
-	$(top_builddir)/cutie/libcutie.la \
-	$(top_builddir)/cutie/libcutie.std.la
+	$(top_builddir)/cutie/libcutie.la
 

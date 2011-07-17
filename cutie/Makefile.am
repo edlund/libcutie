@@ -9,18 +9,14 @@ AM_CFLAGS = \
 	@GCOV_CFLAGS@
 
 lib_LTLIBRARIES = \
-	libcutie.la \
-	libcutie.std.la
+	libcutie.la
 
 libcutie_la_SOURCES = \
-	class.c
-libcutie_la_LIBADD = @LIBOBJS@
-
-libcutie_std_la_SOURCES = \
+	class.c \
 	mem.c \
 	panic.c \
 	str.c
-libcutie_std_la_LIBADD = @LIBOBJS@
+libcutie_la_LIBADD = @LIBOBJS@
 
 CLEANFILES = \
 	config.h.in~ \
