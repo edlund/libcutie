@@ -141,7 +141,7 @@ START_TEST(test_class_callx)
 	fail_if(widget == NULL);
 	hexColor = class_call0(widget, Widget, HexColor);
 	fail_unless(strcmp(hexColor, "808080") == 0);
-	free(hexColor);
+	memfree(hexColor);
 	class_calln(widget, Widget, Rename, "Widget#2");
 	fail_unless(strcmp(widget->name, "Widget#2") == 0);
 	class_calln(widget, Widget, Colorize, 255, 255, 255);
@@ -157,7 +157,7 @@ START_TEST(test_class_callx)
 	fail_if(fileWidget == NULL);
 	hexColor = class_call0(fileWidget, Widget, HexColor);
 	fail_unless(strcmp(hexColor, "101010") == 0);
-	free(hexColor);
+	memfree(hexColor);
 	class_calln(fileWidget, Widget, Rename, "Widget#42");
 	fail_unless(strcmp(fileWidget->Widget.name, "Widget#42") == 0);
 	class_calln(fileWidget, Widget, Colorize, 6, 9, 13);
