@@ -25,7 +25,7 @@ int FileWidget_GetC(self(FileWidget))
 
 int FileWidget_CloseFile(self(FileWidget))
 {
-	memfree(self->path);
+	free(self->path);
 	self->path = NULL;
 	int result = 0;
 	if (self->file) {
@@ -72,7 +72,6 @@ void CheckFileWidgetObject(FileWidget* w)
 	fail_unless(class_mtbl(w, Object)->Clone == FileWidget_Clone);
 	fail_unless(class_mtbl(w, Widget)->Rename == Widget_Rename);
 	fail_unless(class_mtbl(w, Widget)->Colorize == Widget_Colorize);
-	fail_unless(class_mtbl(w, Widget)->HexColor == Widget_HexColor);
 	fail_unless(class_mtbl(w, Widget)->Complexity == FileWidget_Complexity);
 	fail_unless(class_mtbl(w, FileWidget)->GetC == FileWidget_GetC);
 	fail_unless(class_mtbl(w, FileWidget)->CloseFile == FileWidget_CloseFile);

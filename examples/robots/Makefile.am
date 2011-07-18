@@ -6,6 +6,7 @@ AM_CFLAGS = \
     -Wextra \
     -Wno-missing-field-initializers \
     -pedantic \
+    -D_GNU_SOURCE \
     -I$(top_srcdir)/cutie
 
 noinst_PROGRAMS = example

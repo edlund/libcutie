@@ -29,7 +29,6 @@ class_begin_methods(Widget, Object)
 	void (*Rename)(self(Widget), const char* const name);
 	void (*Colorize)(self(Widget), const color_t r, const color_t g,
 		const color_t b);
-	char* (*HexColor)(self(Widget));
 	int (*Complexity)(self(Widget));
 class_end_methods(Widget, Object)
 
@@ -37,7 +36,6 @@ void Widget_Clone(self(Object), Object* original);
 void Widget_Rename(self(Widget), const char* const newName);
 void Widget_Colorize(self(Widget), const color_t r, const color_t g,
 	const color_t b);
-char* Widget_HexColor(self(Widget));
 int Widget_Complexity(self(Widget));
 
 void CheckWidgetObject(Widget* w);

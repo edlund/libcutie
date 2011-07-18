@@ -573,20 +573,6 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler);
  */
 
 /**
- * Duplicate @p s.
- * 
- * @memfree
- */
-char* strdup(const char* const s);
-
-/**
- * Duplicate @p n bytes of @p s.
- * 
- * @memfree
- */
-char* strndup(const char* const s, const size_t n);
-
-/**
  * Handles irrecoverable errors.
  */
 void panic(const char* const format, ...);

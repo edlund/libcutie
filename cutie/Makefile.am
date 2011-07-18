@@ -14,8 +14,7 @@ lib_LTLIBRARIES = \
 libcutie_la_SOURCES = \
 	class.c \
 	mem.c \
-	panic.c \
-	str.c
+	panic.c
 libcutie_la_LIBADD = @LIBOBJS@
 
 CLEANFILES = \

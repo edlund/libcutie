@@ -11,7 +11,7 @@ void Robot_Clone(self(Object), Object* original)
 
 void Robot_Rename(self(Robot), const char* const name)
 {
-	memfree(self->name);
+	free(self->name);
 	self->name = strdup(name);
 }
 
@@ -35,7 +35,7 @@ class_begin_ctor(Robot, Object)
 class_end_ctor(Robot, Object)
 
 class_begin_dtor(Robot, Object)
-	memfree(self->name);
+	free(self->name);
 	self->name = NULL;
 class_end_dtor(Robot, Object)
 
