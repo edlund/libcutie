@@ -12,9 +12,7 @@ lib_LTLIBRARIES = \
 	libcutie.la
 
 libcutie_la_SOURCES = \
-	class.c \
-	mem.c \
-	panic.c
+	cutie.c
 libcutie_la_LIBADD = @LIBOBJS@
 
 CLEANFILES = \

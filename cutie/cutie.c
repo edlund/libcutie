@@ -30,6 +30,96 @@
 #include <config.h>
 #include <cutie.h>
 
+struct _metadata_Class _metadata_Object = {
+	._parent = NULL,
+	._name = "Object",
+	._populated = false,
+	._size = sizeof(Object)
+};
+
+void Object_Constructor(void* const _self, va_list* _args)
+{
+	UNUSED(_self);
+	UNUSED(_args);
+}
+
+void Object_Destructor(void* const _self)
+{
+	UNUSED(_self);
+}
+
+void Object_Clone(self(Object), Object* original)
+{
+	UNUSED(self);
+	UNUSED(original);
+}
+
+void _populate_mtbl_Object(struct _mtbl_Object* mtbl,
+	const char* const name)
+{
+	UNUSED(name);
+	class_method_impl(Object, Constructor, Object_Constructor)
+	class_method_impl(Object, Destructor, Object_Destructor)
+	class_method_impl(Object, Clone, Object_Clone)
+}
+
+void* _class_cast(Object* const instance,
+	const struct _metadata_Class* const target)
+{
+	bool found = false;
+	if (instance && target) {
+		const struct _metadata_Class* current = instance->_metadata;
+		while (current) {
+			if (current == target) {
+				found = true;
+				break;
+			}
+			current = current->_parent;
+		}
+	}
+	return found? instance: NULL;
+}
+
+Object* _class_clone(Object* const original)
+{
+	Object* clone = (Object*)memalloc(original->_metadata->_size);
+	if (clone) {
+		memcpy(clone, original, original->_metadata->_size);
+		class_calln(clone, Object, Clone, original);
+	}
+	return clone;
+}
+
+#if CUTIE_ENABLE_ABSTRACT
+
+ClassAbstractHandler _classAbstractHandler = ClassDefaultAbstractHandler;
+
+ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler)
+{
+	ClassAbstractHandler old = _classAbstractHandler;
+	_classAbstractHandler = handler;
+	return old;
+}
+
+void ClassDefaultAbstractHandler(const char* const name, const char*
+	const class, const char* const method)
+{
+	panic("Abstract class %s can not be instantiated (method %s::%s is abstract)\n",
+		name, class, method);
+}
+
+#endif
+
+void* memalloc(const size_t n)
+{
+	return malloc(n);
+}
+
+void memfree(void* p)
+{
+	free(p);
+}
+
 #include <signal.h>
 #include <stdio.h>
 #if HAVE_EXECINFO_H
