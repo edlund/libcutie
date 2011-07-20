@@ -214,7 +214,7 @@ extern "C" {
  * Notes about new_X():
  * 
  * - If @p ptr is NULL memory will be allocated using
- * memalloc(). Use memfree() to free the ptr. NULL will be
+ * walloc(). Use wfree() to free the ptr. NULL will be
  * returned if the allocation failed.
  */
 #define class_begin_impl(Name, Parent) \
@@ -228,7 +228,7 @@ extern "C" {
 	Name* CPP_CAT(new_, Name)(Name* ptr, ...) \
 	{ \
 		Name* obj = (Name*) \
-			(ptr? ptr: memalloc(sizeof(Name))); \
+			(ptr? ptr: walloc(sizeof(Name))); \
 		if (obj) { \
 			if (!CPP_CAT(_metadata_, Name)._populated) { \
 				CPP_CAT(_populate_mtbl_, Name)(&CPP_CAT(_mtbl_, Name), \
@@ -478,12 +478,12 @@ Object* _class_clone(Object* const original);
 
 /**
  * Delete the given heap allocated @p Instance. If @p Instance
- * is a null pointer, no action occurs. memfree() is used to
+ * is a null pointer, no action occurs. wfree() is used to
  * free the pointer, use _delete_Object() to specify another
  * deallocation method.
  */
 #define delete_Object(Instance) \
-	_delete_Object(memfree, Instance)
+	_delete_Object(wfree, Instance)
 
 #if CUTIE_ENABLE_ALIASES
 /**
@@ -567,12 +567,6 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler);
 /**@}*/ //group:class
 
 /**
- * @defgroup std std
- * Standard implementations of support functions.
- * @{
- */
-
-/**
  * Handles irrecoverable errors.
  */
 void panic(const char* const format, ...);
@@ -581,15 +575,13 @@ void panic(const char* const format, ...);
  * Allocate @p n bytes, usually a wrapper for #malloc. NULL
  * is returned if the request could not be satisfied.
  */
-void* memalloc(const size_t n);
+void* walloc(const size_t n);
 
 /**
- * Free a pointer allocated by memalloc(), usually a wrapper
+ * Free a pointer allocated by walloc(), usually a wrapper
  * for #free.
  */
-void memfree(void* p);
-
-/**@}*/ //group:std
+void wfree(void* p);
 
 #ifdef __cplusplus
 }

@@ -82,7 +82,7 @@ void* _class_cast(Object* const instance,
 
 Object* _class_clone(Object* const original)
 {
-	Object* clone = (Object*)memalloc(original->_metadata->_size);
+	Object* clone = (Object*)walloc(original->_metadata->_size);
 	if (clone) {
 		memcpy(clone, original, original->_metadata->_size);
 		class_calln(clone, Object, Clone, original);
@@ -110,12 +110,12 @@ void ClassDefaultAbstractHandler(const char* const name, const char*
 
 #endif
 
-void* memalloc(const size_t n)
+void* walloc(const size_t n)
 {
 	return malloc(n);
 }
 
-void memfree(void* p)
+void wfree(void* p)
 {
 	free(p);
 }
