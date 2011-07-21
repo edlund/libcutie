@@ -27,8 +27,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <config.h>
-#include <cutie.h>
+#include "config.h"
+#include "cutie.h"
 
 struct _metadata_Class _metadata_Object = {
 	._parent = NULL,
