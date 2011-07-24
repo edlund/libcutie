@@ -30,22 +30,22 @@
 #include "config.h"
 #include "cutie.h"
 
-struct _metadata_Class _metadata_Object = {
-	._parent = NULL,
-	._name = "Object",
-	._populated = false,
-	._size = sizeof(Object)
+struct metadata_Class metadata_Object = {
+	.parent_ = NULL,
+	.name_ = "Object",
+	.populated_ = false,
+	.size_ = sizeof(Object)
 };
 
-void Object_Constructor(void* const _self, va_list* _args)
+void Object_Constructor(void* const self_, va_list* args_)
 {
-	UNUSED(_self);
-	UNUSED(_args);
+	UNUSED(self_);
+	UNUSED(args_);
 }
 
-void Object_Destructor(void* const _self)
+void Object_Destructor(void* const self_)
 {
-	UNUSED(_self);
+	UNUSED(self_);
 }
 
 void Object_Clone(self(Object), Object* original)
@@ -54,58 +54,58 @@ void Object_Clone(self(Object), Object* original)
 	UNUSED(original);
 }
 
-void _populate_mtbl_Object(struct _mtbl_Object* mtbl,
-	const char* const name)
+void populate_mtbl_Object(struct mtbl_Object* mtbl_,
+	const char* const name_)
 {
-	UNUSED(name);
+	UNUSED(name_);
 	class_method_impl(Object, Constructor, Object_Constructor)
 	class_method_impl(Object, Destructor, Object_Destructor)
 	class_method_impl(Object, Clone, Object_Clone)
 }
 
-void* _class_cast(Object* const instance,
-	const struct _metadata_Class* const target)
+void* class_cast_(Object* const instance_,
+	const struct metadata_Class* const target_)
 {
-	bool found = false;
-	if (instance && target) {
-		const struct _metadata_Class* current = instance->_metadata;
-		while (current) {
-			if (current == target) {
-				found = true;
+	bool found_ = false;
+	if (instance_ && target_) {
+		const struct metadata_Class* current_ = instance_->metadata_;
+		while (current_) {
+			if (current_ == target_) {
+				found_ = true;
 				break;
 			}
-			current = current->_parent;
+			current_ = current_->parent_;
 		}
 	}
-	return found? instance: NULL;
+	return found_? instance_: NULL;
 }
 
-Object* _class_clone(Object* const original)
+Object* class_clone_(Object* const original_)
 {
-	Object* clone = (Object*)walloc(original->_metadata->_size);
-	if (clone) {
-		memcpy(clone, original, original->_metadata->_size);
-		class_calln(clone, Object, Clone, original);
+	Object* clone_ = (Object*)walloc(original_->metadata_->size_);
+	if (clone_) {
+		memcpy(clone_, original_, original_->metadata_->size_);
+		class_calln(clone_, Object, Clone, original_);
 	}
-	return clone;
+	return clone_;
 }
 
 #if CUTIE_ENABLE_ABSTRACT
 
-ClassAbstractHandler _classAbstractHandler = ClassDefaultAbstractHandler;
+ClassAbstractHandler classAbstractHandler_ = ClassDefaultAbstractHandler;
 
-ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler)
+ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_)
 {
-	ClassAbstractHandler old = _classAbstractHandler;
-	_classAbstractHandler = handler;
-	return old;
+	ClassAbstractHandler old_ = classAbstractHandler_;
+	classAbstractHandler_ = handler_;
+	return old_;
 }
 
-void ClassDefaultAbstractHandler(const char* const name, const char*
-	const class, const char* const method)
+void ClassDefaultAbstractHandler(const char* const name_, const char*
+	const class_, const char* const method_)
 {
 	panic("Abstract class %s can not be instantiated (method %s::%s is abstract)\n",
-		name, class, method);
+		name_, class_, method_);
 }
 
 #endif
@@ -133,22 +133,22 @@ void wfree(void* p)
  * 
  * http://www.gnu.org/s/hello/manual/libc/Backtraces.html
  */
-void panic(const char* const format, ...)
+void panic(const char* const format_, ...)
 {
-	va_list args;
-	va_start(args, format);
-	vfprintf(stderr, format, args);
-	va_end(args);
+	va_list args_;
+	va_start(args_, format_);
+	vfprintf(stderr, format_, args_);
+	va_end(args_);
 #if HAVE_EXECINFO_H
-	void* buffer[32];
-	int size = backtrace(buffer, 32);
-	char** symbols = backtrace_symbols(buffer, size);
-	if (size > 0 && symbols) {
+	void* buffer_[32];
+	int size_ = backtrace(buffer_, 32);
+	char** symbols_ = backtrace_symbols(buffer_, size_);
+	if (size_ > 0 && symbols_) {
 		fprintf(stderr, "\n[backtrace]\n");
-		for (int i = 0; i < size; i++)
-			fprintf(stderr, "%s\n", symbols[i]);
+		for (int i = 0; i < size_; i++)
+			fprintf(stderr, "%s\n", symbols_[i]);
 	}
-	free(symbols);
+	free(symbols_);
 #endif
 	raise(SIGKILL);
 }

@@ -27,8 +27,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _CUTIE_H_
-#define _CUTIE_H_
+#ifndef CUTIE_H
+#define CUTIE_H
 
 /**
  * @file cutie.h
@@ -77,22 +77,22 @@ extern "C" {
 /**
  * Evaluator for CPP_STR().
  */
-#define _CPP_STR(s) #s
+#define CPP_STR_(s) #s
 
 /**
  * Stringize @p s.
  */
-#define CPP_STR(s) _CPP_STR(s)
+#define CPP_STR(s) CPP_STR_(s)
 
 /**
  * Evaluator for CPP_CAT().
  */
-#define _CPP_CAT(a, b) a##b
+#define CPP_CAT_(a, b) a##b
 
 /**
  * Concat @p a with @p b.
  */
-#define CPP_CAT(a, b) _CPP_CAT(a, b)
+#define CPP_CAT(a, b) CPP_CAT_(a, b)
 
 /**
  * Mark @p Var as an unused variable in order to avoid
@@ -116,15 +116,14 @@ extern "C" {
  * can be used as parent, #Object must be used.
  */
 #define class_begin_def(Name, Parent) \
-	extern struct CPP_CAT(_mtbl_, Name) CPP_CAT(_mtbl_, Name); \
-	extern struct _metadata_Class CPP_CAT(_metadata_, Name); \
-	struct CPP_CAT(_, Name)* CPP_CAT(new_, Name)( \
-		struct CPP_CAT(_, Name)* ptr, ...); \
-	void CPP_CAT(Name, _Constructor)(void* const _self, va_list* _args); \
-	void CPP_CAT(Name, _Destructor)(void* const _self); \
-	void CPP_CAT(_populate_mtbl_, Name)(struct CPP_CAT(_mtbl_, Name)* \
-		const mtbl, const char* const name); \
-	typedef struct CPP_CAT(_, Name) { \
+	extern struct CPP_CAT(mtbl_, Name) CPP_CAT(mtbl_, Name); \
+	extern struct metadata_Class CPP_CAT(metadata_, Name); \
+	struct Name* CPP_CAT(new_, Name)(struct Name*, ...); \
+	void CPP_CAT(Name, _Constructor)(void* const, va_list*); \
+	void CPP_CAT(Name, _Destructor)(void* const); \
+	void CPP_CAT(populate_mtbl_, Name)(struct CPP_CAT(mtbl_, Name)* \
+		const, const char* const); \
+	typedef struct Name { \
 		Parent Parent;
 /**
  * @endof class_begin_def().
@@ -139,8 +138,8 @@ extern "C" {
  * function pointer.
  */
 #define class_begin_methods(Name, Parent) \
-	struct CPP_CAT(_mtbl_, Name) { \
-		struct CPP_CAT(_mtbl_, Parent) Parent;
+	struct CPP_CAT(mtbl_, Name) { \
+		struct CPP_CAT(mtbl_, Parent) Parent;
 /**
  * @endof class_begin_methods().
  */
@@ -170,7 +169,7 @@ extern "C" {
  * for a class is not yet populated.
  */
 #define class_mtbl(Instance, Class) \
-	((struct CPP_CAT(_mtbl_, Class)*)((Object*)Instance)->_mtbl)
+	((struct CPP_CAT(mtbl_, Class)*)((Object*)Instance)->mtbl_)
 
 /**
  * Call a method taking no parameters, declared for @p Class,
@@ -197,7 +196,7 @@ extern "C" {
  * Put class_begin_impl() / class_end_impl() in an
  * implementation file (C source file).
  * 
- * Notes about _populate_mtbl_X():
+ * Notes about populate_mtbl_X():
  * 
  * - Threads could get into a race about assigning the methods
  * for a class, but since all threads will perform exactly
@@ -213,40 +212,40 @@ extern "C" {
  * 
  * Notes about new_X():
  * 
- * - If @p ptr is NULL memory will be allocated using
- * walloc(). Use wfree() to free the ptr. NULL will be
- * returned if the allocation failed.
+ * - If @p ptr_ is NULL memory will be allocated using walloc().
+ * Use wfree() to free the ptr. NULL will be returned if the
+ * allocation failed.
  */
 #define class_begin_impl(Name, Parent) \
-	struct CPP_CAT(_mtbl_, Name) CPP_CAT(_mtbl_, Name) = CPP_CAT(Name, _Init); \
-	struct _metadata_Class CPP_CAT(_metadata_, Name) = { \
-		._parent = &CPP_CAT(_metadata_, Parent), \
-		._name = CPP_STR(Name), \
-		._populated = 0, \
-		._size = sizeof(Name) \
+	struct CPP_CAT(mtbl_, Name) CPP_CAT(mtbl_, Name) = CPP_CAT(Name, _Init); \
+	struct metadata_Class CPP_CAT(metadata_, Name) = { \
+		.parent_ = &CPP_CAT(metadata_, Parent), \
+		.name_ = CPP_STR(Name), \
+		.populated_ = 0, \
+		.size_ = sizeof(Name) \
 	}; \
-	Name* CPP_CAT(new_, Name)(Name* ptr, ...) \
+	Name* CPP_CAT(new_, Name)(Name* ptr_, ...) \
 	{ \
-		Name* obj = (Name*) \
-			(ptr? ptr: walloc(sizeof(Name))); \
-		if (obj) { \
-			if (!CPP_CAT(_metadata_, Name)._populated) { \
-				CPP_CAT(_populate_mtbl_, Name)(&CPP_CAT(_mtbl_, Name), \
+		Name* obj_ = (Name*) \
+			(ptr_? ptr_: walloc(sizeof(Name))); \
+		if (obj_) { \
+			if (!CPP_CAT(metadata_, Name).populated_) { \
+				CPP_CAT(populate_mtbl_, Name)(&CPP_CAT(mtbl_, Name), \
 					CPP_STR(Name)); \
-				CPP_CAT(_metadata_, Name)._populated = true; \
+				CPP_CAT(metadata_, Name).populated_ = true; \
 			} \
-			class_qcast(obj, Object)->_mtbl = (struct _mtbl_Object*) \
-				&CPP_CAT(_mtbl_, Name); \
-			class_qcast(obj, Object)->_metadata = &CPP_CAT(_metadata_, Name); \
-			va_list args; \
-			va_start(args, ptr); \
-			class_mtbl(obj, Object)->Constructor(obj, &args); \
-			va_end(args); \
+			class_qcast(obj_, Object)->mtbl_ = (struct mtbl_Object*) \
+				&CPP_CAT(mtbl_, Name); \
+			class_qcast(obj_, Object)->metadata_ = &CPP_CAT(metadata_, Name); \
+			va_list args_; \
+			va_start(args_, ptr_); \
+			class_mtbl(obj_, Object)->Constructor(obj_, &args_); \
+			va_end(args_); \
 		} \
-		return obj; \
+		return obj_; \
 	} \
-	void CPP_CAT(_populate_mtbl_, Name)(struct CPP_CAT(_mtbl_, Name)* \
-		const mtbl, const char* const name) \
+	void CPP_CAT(populate_mtbl_, Name)(struct CPP_CAT(mtbl_, Name)* \
+		const mtbl_, const char* const name_) \
 	{ \
 		class_method_impl(Object, Constructor, CPP_CAT(Name, _Constructor)) \
 		class_method_impl(Object, Destructor, CPP_CAT(Name, _Destructor))
@@ -254,7 +253,7 @@ extern "C" {
  * @endof class_begin_impl().
  */
 #define class_end_impl(Name, Parent) \
-		CPP_CAT(_populate_mtbl_, Parent)(&mtbl->Parent, name); \
+		CPP_CAT(populate_mtbl_, Parent)(&mtbl_->Parent, name_); \
 	}
 
 /**
@@ -263,18 +262,18 @@ extern "C" {
  * @scope class_begin_impl() => class_end_impl()
  */
 #define class_method_impl(Class, Method, Impl) \
-	if (!((struct CPP_CAT(_mtbl_, Class)*)mtbl)->Method) { \
-		((struct CPP_CAT(_mtbl_, Class)*)mtbl)->Method = Impl; \
+	if (!((struct CPP_CAT(mtbl_, Class)*)mtbl_)->Method) { \
+		((struct CPP_CAT(mtbl_, Class)*)mtbl_)->Method = Impl; \
 	}
 
 /**
  * Declare the constructor for the class @p Name.
  */
 #define class_begin_ctor(Name, Parent) \
-	void CPP_CAT(Name, _Constructor)(void* const _self, va_list* _args) \
+	void CPP_CAT(Name, _Constructor)(void* const self_, va_list* args_) \
 	{ \
-		CPP_CAT(Parent, _Constructor)(_self, _args); \
-		Name* const self = (Name*)_self; \
+		CPP_CAT(Parent, _Constructor)(self_, args_); \
+		Name* const self = (Name*)self_; \
 		(void)self;
 /**
  * @endof class_begin_ctor().
@@ -288,21 +287,21 @@ extern "C" {
  * @scope class_begin_ctor() => class_end_ctor()
  */
 #define class_ctor_arg(Type) \
-	va_arg(*_args, Type)
+	va_arg(*args_, Type)
 
 /**
  * Declare the destructor for the class @p Name.
  */
 #define class_begin_dtor(Name, Parent) \
-	void CPP_CAT(Name, _Destructor)(void* const _self) \
+	void CPP_CAT(Name, _Destructor)(void* const self_) \
 	{ \
-		Name* const self = (Name*)_self; \
+		Name* const self = (Name*)self_; \
 		(void)self;
 /**
  * @endof class_begin_dtor().
  */
 #define class_end_dtor(Name, Parent) \
-		CPP_CAT(Parent, _Destructor)(_self); \
+		CPP_CAT(Parent, _Destructor)(self_); \
 	}
 
 /**
@@ -312,51 +311,51 @@ extern "C" {
  * @{
  */
 
-struct _mtbl_Object;
-struct _metadata_Class;
+struct mtbl_Object;
+struct metadata_Class;
 
 /**
  * Topmost parent of all classes.
  */
-typedef struct _Object {
+typedef struct Object {
 	/// Method table for the class.
-	const struct _mtbl_Object* _mtbl;
+	const struct mtbl_Object* mtbl_;
 	/// Metadata about the class.
-	const struct _metadata_Class* _metadata;
+	const struct metadata_Class* metadata_;
 } Object;
 
 /**
- * Each class will have an associated _metadata_Class
+ * Each class will have an associated metadata_Class
  * structure which each object of that class will have a
  * pointer to. This is required in order to implement certain
  * RTTI features.
  */
-struct _metadata_Class {
+struct metadata_Class {
 	/// The metadata for the parent of the described class.
 	/// Will be NULL for #Object.
-	const struct _metadata_Class* const _parent;
+	const struct metadata_Class* const parent_;
 	/// The name of the described class.
-	const char* const _name;
+	const char* const name_;
 	/// The size in bytes of the described class.
-	const size_t _size;
+	const size_t size_;
 	/// Determine if the method table for the described class
 	/// has been populated.
-	bool _populated;
+	bool populated_;
 };
 
 /**
  * Metadata about Object.
  */
-extern struct _metadata_Class _metadata_Object;
+extern struct metadata_Class metadata_Object;
 
 /**
  * Method table for Object.
  */
-struct _mtbl_Object {
+struct mtbl_Object {
 	/// Called when a new object is created.
-	void (*Constructor)(void* const _self, va_list* _args);
+	void (*Constructor)(void* const, va_list*);
 	/// Should be explicitly called before an object is destroyed.
-	void (*Destructor)(void* const _self);
+	void (*Destructor)(void* const);
 	/// Called on the replica when an object is cloned.
 	void (*Clone)(Object* self, Object* original);
 };
@@ -365,22 +364,22 @@ struct _mtbl_Object {
  * Initialize the method table for Object to default values
  * if necessary.
  */
-void _populate_mtbl_Object(struct _mtbl_Object* mtbl,
-	const char* const name);
+void populate_mtbl_Object(struct mtbl_Object*,
+	const char* const);
 
 /**
  * Object constructor.
  */
-void Object_Constructor(void* const _self, va_list* _args);
+void Object_Constructor(void* const, va_list*);
 
 /**
  * Object destructor.
  */
-void Object_Destructor(void* const _self);
+void Object_Destructor(void* const);
 
 /**
  * Default no-op which is called on the new object created
- * by clone() unless a sub class overrides it.
+ * by class_clone() unless a sub class overrides it.
  */
 void Object_Clone(self(Object), Object* original);
 
@@ -413,7 +412,7 @@ void Object_Clone(self(Object), Object* original);
  * Get the class name for the given @p Instance.
  */
 #define class_name(Instance) \
-	((Object*)Instance)->_metadata->_name
+	((Object*)Instance)->metadata_->name_
 
 /**
  * Perform a quick, but unsafe/unchecked, cast of @p Instance
@@ -430,13 +429,13 @@ void Object_Clone(self(Object), Object* original);
  * class_cast().
  */
 #define class_cast(Instance, Class) \
-	(Class*)_class_cast((Object*)Instance, &CPP_CAT(_metadata_, Class))
+	(Class*)class_cast_((Object*)Instance, &CPP_CAT(metadata_, Class))
 
 /**
  * Backend for class_cast().
  */
-void* _class_cast(Object* const instance,
-	const struct _metadata_Class* const target);
+void* class_cast_(Object* const instance_,
+	const struct metadata_Class* const target_);
 
 /**
  * Determine if the given @p Instance is an instance of @p
@@ -457,17 +456,26 @@ void* _class_cast(Object* const instance,
  * the clone.
  */
 #define class_clone(Original) \
-	_class_clone((Object*)Original)
+	class_clone_((Object*)Original)
 
 /**
  * Backend for class_clone().
  */
-Object* _class_clone(Object* const original);
+Object* class_clone_(Object* const original_);
+
+/**
+ * Delete the given heap allocated @p Instance. If @p Instance
+ * is a null pointer, no action occurs. wfree() is used to
+ * free the pointer, use delete_Object_() to specify another
+ * deallocation method.
+ */
+#define delete_Object(Instance) \
+	delete_Object_(wfree, Instance)
 
 /**
  * Backend for delete_Object().
  */
-#define _delete_Object(Deallocator, Instance) \
+#define delete_Object_(Deallocator, Instance) \
 	do { \
 		if (Instance) { \
 			class_call0(Instance, Object, Destructor); \
@@ -475,15 +483,6 @@ Object* _class_clone(Object* const original);
 			Instance = NULL; \
 		} \
 	} while (0)
-
-/**
- * Delete the given heap allocated @p Instance. If @p Instance
- * is a null pointer, no action occurs. wfree() is used to
- * free the pointer, use _delete_Object() to specify another
- * deallocation method.
- */
-#define delete_Object(Instance) \
-	_delete_Object(wfree, Instance)
 
 #if CUTIE_ENABLE_ALIASES
 /**
@@ -534,16 +533,16 @@ Object* _class_clone(Object* const original);
  * @scope class_begin_impl() => class_end_impl()
  */
 #define class_method_abstract(Class, Method) \
-	if (!((struct CPP_CAT(_mtbl_, Class)*)mtbl)->Method) { \
-		_classAbstractHandler(name, CPP_STR(Class), CPP_STR(Method)); \
+	if (!((struct CPP_CAT(mtbl_, Class)*)mtbl_)->Method) { \
+		classAbstractHandler_(name_, CPP_STR(Class), CPP_STR(Method)); \
 	}
 
 /**
  * Default abstract handler which is called when someone
  * tries to instantiate an abstract class.
  */
-void ClassDefaultAbstractHandler(const char* const name, const char*
-	const class, const char* const method);
+void ClassDefaultAbstractHandler(const char* const name_, const char*
+	const class_, const char* const method_);
 
 /**
  * Signature for abstract handlers.
@@ -554,12 +553,12 @@ typedef void (*ClassAbstractHandler)(const char* const, const char* const,
 /**
  * Pointer to the abstract handler.
  */
-extern ClassAbstractHandler _classAbstractHandler;
+extern ClassAbstractHandler classAbstractHandler_;
 
 /**
  * Replace the default abstract handler.
  */
-ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler);
+ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_);
 
 /**@}*/ //group:abstract
 #endif
@@ -569,7 +568,7 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler);
 /**
  * Handles irrecoverable errors.
  */
-void panic(const char* const format, ...);
+void panic(const char* const, ...);
 
 /**
  * Allocate @p n bytes, usually a wrapper for #malloc. NULL

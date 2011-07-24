@@ -65,8 +65,8 @@ class_end_dtor(FileWidget, Widget)
 
 void CheckFileWidgetObject(FileWidget* w)
 {
-	fail_unless((struct _mtbl_FileWidget*)((Object*)w)->_mtbl == &_mtbl_FileWidget);
-	fail_unless(((Object*)w)->_metadata == &_metadata_FileWidget);
+	fail_unless((struct mtbl_FileWidget*)((Object*)w)->mtbl_ == &mtbl_FileWidget);
+	fail_unless(((Object*)w)->metadata_ == &metadata_FileWidget);
 	fail_unless(class_mtbl(w, Object)->Constructor == FileWidget_Constructor);
 	fail_unless(class_mtbl(w, Object)->Destructor == FileWidget_Destructor);
 	fail_unless(class_mtbl(w, Object)->Clone == FileWidget_Clone);
@@ -76,6 +76,6 @@ void CheckFileWidgetObject(FileWidget* w)
 	fail_unless(class_mtbl(w, FileWidget)->GetC == FileWidget_GetC);
 	fail_unless(class_mtbl(w, FileWidget)->CloseFile == FileWidget_CloseFile);
 	fail_unless(class_mtbl(w, FileWidget)->OpenFile == FileWidget_OpenFile);
-	fail_unless(((Object*)w)->_metadata->_size == sizeof(FileWidget));
+	fail_unless(((Object*)w)->metadata_->size_ == sizeof(FileWidget));
 }
 

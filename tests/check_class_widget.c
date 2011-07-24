@@ -61,14 +61,14 @@ class_end_dtor(Widget, Object)
 
 void CheckWidgetObject(Widget* w)
 {
-	fail_unless((struct _mtbl_Widget*)((Object*)w)->_mtbl == &_mtbl_Widget);
-	fail_unless(((Object*)w)->_metadata == &_metadata_Widget);
+	fail_unless((struct mtbl_Widget*)((Object*)w)->mtbl_ == &mtbl_Widget);
+	fail_unless(((Object*)w)->metadata_ == &metadata_Widget);
 	fail_unless(class_mtbl(w, Object)->Constructor == Widget_Constructor);
 	fail_unless(class_mtbl(w, Object)->Destructor == Widget_Destructor);
 	fail_unless(class_mtbl(w, Object)->Clone == Widget_Clone);
 	fail_unless(class_mtbl(w, Widget)->Rename == Widget_Rename);
 	fail_unless(class_mtbl(w, Widget)->Colorize == Widget_Colorize);
 	fail_unless(class_mtbl(w, Widget)->Complexity == Widget_Complexity);
-	fail_unless(((Object*)w)->_metadata->_size == sizeof(Widget));
+	fail_unless(((Object*)w)->metadata_->size_ == sizeof(Widget));
 }
 

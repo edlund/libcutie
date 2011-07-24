@@ -21,7 +21,7 @@
 #include "check_class_filewidget.h"
 #include "check_class_integerwidget.h"
 
-#define FILEWIDGET_FILE_PATH _TOP_SRCDIR "/tests/check_class_filewidget.txt"
+#define FILEWIDGET_FILE_PATH TOP_SRCDIR "/tests/check_class_filewidget.txt"
 
 const Color DefaultColor = { 128, 128, 128 };
 const Color TrendyColor = { 16, 16, 16 };

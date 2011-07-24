@@ -20,13 +20,13 @@ class_end_dtor(AbstractGizmo, Object)
 
 void CheckAbstractGizmoObject(AbstractGizmo* a)
 {
-	fail_unless((struct _mtbl_AbstractGizmo*)((Object*)a)->_mtbl == &_mtbl_AbstractGizmo);
-	fail_unless(((Object*)a)->_metadata == &_metadata_AbstractGizmo);
+	fail_unless((struct mtbl_AbstractGizmo*)((Object*)a)->mtbl_ == &mtbl_AbstractGizmo);
+	fail_unless(((Object*)a)->metadata_ == &metadata_AbstractGizmo);
 	fail_unless(class_mtbl(a, Object)->Constructor == AbstractGizmo_Constructor);
 	fail_unless(class_mtbl(a, Object)->Destructor == AbstractGizmo_Destructor);
 	fail_unless(class_mtbl(a, Object)->Clone == Object_Clone);
 	fail_unless(class_mtbl(a, AbstractGizmo)->Transmogrify == NULL);
-	fail_unless(((Object*)a)->_metadata->_size == sizeof(AbstractGizmo));
+	fail_unless(((Object*)a)->metadata_->size_ == sizeof(AbstractGizmo));
 }
 
 #endif

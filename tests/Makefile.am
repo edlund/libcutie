@@ -8,9 +8,9 @@ AM_CFLAGS = \
 	-pedantic \
 	-I$(top_srcdir)/cutie \
 	-D_GNU_SOURCE \
-	-D_CUTIE_CHECK=1 \
-	-D_TOP_SRCDIR="\"$(top_srcdir)\"" \
-	-D_TOP_BUILDDIR="\"$(top_builddir)\"" \
+	-DCUTIE_CHECK=1 \
+	-DTOP_SRCDIR=\"$(top_srcdir)\" \
+	-DTOP_BUILDDIR=\"$(top_builddir)\" \
 	@GCOV_CFLAGS@
 AM_LDFLAGS = -lcheck
 

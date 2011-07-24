@@ -32,7 +32,7 @@ It might never become useful for any real world scenario either.
 You need the following things to successfully compile cutie:
 
  * An ISO C99 compiler and preprocessor:
-   * gcc (4.4.x+), http://gcc.gnu.org/
+   * gcc (4.4+), http://gcc.gnu.org/
    * clang (2.8+), http://clang.llvm.org/
  * GNU autotools, http://www.gnu.org/software/autoconf/
  * libtool, http://www.gnu.org/software/libtool/

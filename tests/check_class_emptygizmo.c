@@ -17,11 +17,11 @@ class_end_dtor(EmptyGizmo, Object)
 
 void CheckEmptyGizmoObject(EmptyGizmo* e)
 {
-	fail_unless((struct _mtbl_EmptyGizmo*)((Object*)e)->_mtbl == &_mtbl_EmptyGizmo);
-	fail_unless(((Object*)e)->_metadata == &_metadata_EmptyGizmo);
+	fail_unless((struct mtbl_EmptyGizmo*)((Object*)e)->mtbl_ == &mtbl_EmptyGizmo);
+	fail_unless(((Object*)e)->metadata_ == &metadata_EmptyGizmo);
 	fail_unless(class_mtbl(e, Object)->Constructor == EmptyGizmo_Constructor);
 	fail_unless(class_mtbl(e, Object)->Destructor == EmptyGizmo_Destructor);
 	fail_unless(class_mtbl(e, Object)->Clone == Object_Clone);
-	fail_unless(((Object*)e)->_metadata->_size == sizeof(EmptyGizmo));
+	fail_unless(((Object*)e)->metadata_->size_ == sizeof(EmptyGizmo));
 }
 
