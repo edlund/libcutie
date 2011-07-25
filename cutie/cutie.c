@@ -116,13 +116,6 @@ void ClassDefaultAbstractHandler(const char* const name_, const char*
 #include <execinfo.h>
 #endif
 
-/* Print a formatted message to stderr, print a backtrace if
- * supported and raise the SIGKILL signal.
- * 
- * This is cuties default user space panic() function.
- * 
- * http://www.gnu.org/s/hello/manual/libc/Backtraces.html
- */
 void panic(const char* const format_, ...)
 {
 	va_list args_;

@@ -53,6 +53,8 @@
 #define CUTIE_ENABLE_ABSTRACT @ENABLE_ABSTRACT@
 
 #ifndef CUTIE_STDC
+/// Define to one to require compiler C99 support to be
+/// directly detectable.
 #define CUTIE_STDC 1
 #endif
 #if CUTIE_STDC && ( \
@@ -566,7 +568,13 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_);
 /**@}*/ //group:class
 
 /**
- * Handles irrecoverable errors.
+ * Handle irrecoverable errors. This is cuties default user
+ * space panic() function.
+ * 
+ * Will print a formatted message to stderr, print a backtrace
+ * (if supported) and raise the SIGKILL signal.
+ * 
+ * http://www.gnu.org/s/hello/manual/libc/Backtraces.html
  */
 void panic(const char* const, ...);
 
