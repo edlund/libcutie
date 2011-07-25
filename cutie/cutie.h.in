@@ -574,13 +574,19 @@ void panic(const char* const, ...);
  * Allocate @p n bytes, usually a wrapper for #malloc. NULL
  * is returned if the request could not be satisfied.
  */
-void* walloc(const size_t n);
+static inline void* walloc(const size_t n)
+{
+	return malloc(n);
+}
 
 /**
  * Free a pointer allocated by walloc(), usually a wrapper
  * for #free.
  */
-void wfree(void* p);
+static inline void wfree(void* p)
+{
+	free(p);
+}
 
 #ifdef __cplusplus
 }

@@ -110,16 +110,6 @@ void ClassDefaultAbstractHandler(const char* const name_, const char*
 
 #endif
 
-void* walloc(const size_t n)
-{
-	return malloc(n);
-}
-
-void wfree(void* p)
-{
-	free(p);
-}
-
 #include <signal.h>
 #include <stdio.h>
 #if HAVE_EXECINFO_H
