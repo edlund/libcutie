@@ -3,13 +3,11 @@
 
 #include <cutie.h>
 
-typedef unsigned char color_t;
-
-typedef struct _Color
+typedef struct Color
 {
-	color_t r;
-	color_t g;
-	color_t b;
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
 } Color;
 
 enum {
@@ -27,15 +25,15 @@ class_end_def(Widget, Object)
 
 class_begin_methods(Widget, Object)
 	void (*Rename)(self(Widget), const char* const name);
-	void (*Colorize)(self(Widget), const color_t r, const color_t g,
-		const color_t b);
+	void (*Colorize)(self(Widget), const unsigned char r, const
+		unsigned char g, const unsigned char b);
 	int (*Complexity)(self(Widget));
 class_end_methods(Widget, Object)
 
 void Widget_Clone(self(Object), Object* original);
 void Widget_Rename(self(Widget), const char* const newName);
-void Widget_Colorize(self(Widget), const color_t r, const color_t g,
-	const color_t b);
+void Widget_Colorize(self(Widget), const unsigned char r, const
+	unsigned char g, const unsigned char b);
 int Widget_Complexity(self(Widget));
 
 void CheckWidgetObject(Widget* w);

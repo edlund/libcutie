@@ -18,8 +18,8 @@ void Widget_Rename(self(Widget), const char* const name)
 	self->name = strdup(name);
 }
 
-void Widget_Colorize(self(Widget), const color_t r, const color_t g,
-	const color_t b)
+void Widget_Colorize(self(Widget), const unsigned char r,
+	const unsigned char g, const unsigned char b)
 {
 	self->color.r = r;
 	self->color.g = g;
