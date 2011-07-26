@@ -457,16 +457,22 @@ void* class_cast_(Object* const instance_,
  * or a resource which can not be shared between multiple
  * objects. It will be called for the created clone.
  * 
- * @p NULL will be returned if memory can not be created for
- * the clone.
+ * @p NULL will be returned if memory for the clone could
+ * not be allocated using walloc().
  */
 #define class_clone(Original) \
-	class_clone_((Object*)Original)
+	class_clone_((Object*)Original, NULL)
 
 /**
  * Backend for class_clone().
+ * 
+ * If @p clone_ is NULL, memory for the clone will be
+ * allocated using walloc(). If @p clone_ is not NULL, it
+ * will be used for the cloning. If @p original_ and @p clone_
+ * are not instances of the same class the result will be
+ * undefined behaviour.
  */
-Object* class_clone_(Object* const original_);
+Object* class_clone_(Object* const original_, Object* clone_);
 
 /**
  * Delete the given heap allocated @p Instance. If @p Instance

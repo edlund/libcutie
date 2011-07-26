@@ -81,9 +81,9 @@ void* class_cast_(Object* const instance_,
 	return found_? instance_: NULL;
 }
 
-Object* class_clone_(Object* const original_)
+Object* class_clone_(Object* const original_, Object* clone_)
 {
-	Object* clone_ = (Object*)walloc(original_->metadata_->size_);
+	clone_ = clone_? clone_: (Object*)walloc(original_->metadata_->size_);
 	if (clone_) {
 		memcpy(clone_, original_, original_->metadata_->size_);
 		class_calln(clone_, Object, Clone, original_);
