@@ -19,11 +19,10 @@ AC_ARG_WITH([check],
 AC_CHECK_HEADER([check.h], [], [AC_MSG_ERROR(
 	[Could not find Check unit test framework.])])
 
-AC_DEFINE([HAVE_EXECINFO_H], [],
-	[Define to 1 if you have the <execinfo.h> header file.])
 AC_CHECK_HEADER([execinfo.h],
-	[AC_DEFINE_UNQUOTED([HAVE_EXECINFO_H], [1])],
-	[AC_DEFINE_UNQUOTED([HAVE_EXECINFO_H], [0])])
+	[HAVE_EXECINFO_H=1],
+	[HAVE_EXECINFO_H=0])
+AC_SUBST(HAVE_EXECINFO_H)
 
 AC_ARG_ENABLE([aliases],
 	[AC_HELP_STRING([--enable-aliases],

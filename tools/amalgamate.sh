@@ -18,13 +18,6 @@ fi
 echo "Creating: $top_builddir/cutie.c"
 echo "Creating: $top_builddir/cutie.h"
 
-# Copy cutie.c to the build dir and remove any "project"
-# #includes from it (i.e. #include "...").
-cp $top_srcdir/cutie/cutie.c $top_builddir/cutie.tmp.c
-sed --regexp-extended --in-place \
-	's/(#\s*include\s*"[^"]+")/\/\/ \1/g' \
-	$top_builddir/cutie.tmp.c
-
 # Create the combined source file.
 timestamp=`date +"%Y-%m-%d %H:%M"`
 cat > $top_builddir/cutie.c <<EOF
@@ -46,9 +39,7 @@ cat > $top_builddir/cutie.c <<EOF
 EOF
 cat >> $top_builddir/cutie.c \
 	$top_builddir/cutie/cutie.h \
-	$top_builddir/cutie.tmp.c
-
-rm -f $top_builddir/cutie.tmp.c
+	$top_srcdir/cutie/cutie.c
 
 cp $top_builddir/cutie/cutie.h $top_builddir/cutie.h
 

@@ -27,8 +27,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "cutie.h"
+#ifndef CUTIE_AMALGAMATION
+#include <cutie.h>
+#endif
 
 struct metadata_Class metadata_Object = {
 	.parent_ = NULL,
@@ -112,7 +113,7 @@ void ClassDefaultAbstractHandler(const char* const name_, const char*
 
 #include <signal.h>
 #include <stdio.h>
-#if HAVE_EXECINFO_H
+#if CUTIE_HAVE_EXECINFO_H
 #include <execinfo.h>
 #endif
 
@@ -122,7 +123,7 @@ void panic(const char* const format_, ...)
 	va_start(args_, format_);
 	vfprintf(stderr, format_, args_);
 	va_end(args_);
-#if HAVE_EXECINFO_H
+#if CUTIE_HAVE_EXECINFO_H
 	void* buffer_[32];
 	int size_ = backtrace(buffer_, 32);
 	char** symbols_ = backtrace_symbols(buffer_, size_);

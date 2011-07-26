@@ -46,6 +46,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/// Define to 1 if you have the <execinfo.h> header file.
+#define CUTIE_HAVE_EXECINFO_H @HAVE_EXECINFO_H@
+
 /// ./configure --enable-aliases
 #define CUTIE_ENABLE_ALIASES @ENABLE_ALIASES@
 
