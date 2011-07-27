@@ -111,6 +111,7 @@ void ClassDefaultAbstractHandler(const char* const name_, const char*
 
 #endif
 
+#ifndef CUTIE_KERNEL
 #include <signal.h>
 #include <stdio.h>
 #if CUTIE_HAVE_EXECINFO_H
@@ -136,4 +137,5 @@ void panic(const char* const format_, ...)
 #endif
 	raise(SIGKILL);
 }
+#endif
 

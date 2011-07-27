@@ -33,7 +33,6 @@ cat > $top_builddir/cutie.c <<EOF
  * sure that it is compiled and linked. If you do not have a
  * copy of cutie.h you can create one using this file.
  */
-#define CUTIE_STDC 0
 #define CUTIE_AMALGAMATION 1
 
 EOF

@@ -41,13 +41,44 @@
  * @{
  */
 
+/**
+ * Determine if the kernel @p Name is detected (for example
+ * @p CUTIE_KERNEL_LINUX).
+ */
+#define CUTIE_KERNEL_CK(Name) \
+	defined(CUTIE_KERNEL) && CUTIE_KERNEL == Name
+
+/// Linux kernel.
+#define CUTIE_KERNEL_LINUX linux
+#ifdef __KERNEL__
+#define CUTIE_KERNEL CUTIE_KERNEL_LINUX
+#endif
+
+#ifndef CUTIE_KERNEL
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#elif CUTIE_KERNEL_CK(CUTIE_KERNEL_LINUX)
+#include <linux/kernel.h>
+#include <linux/slab.h>
+#include <linux/stddef.h>
+#include <linux/string.h>
+#include <linux/types.h>
+#include <stdarg.h>
+#define CUTIE_STDC 0
+#else
+#error "CUTIE_KERNEL is set, but unsupported."
+#endif
+
+#ifndef CUTIE_KERNEL
+/* User space specific configuration.
+ */
 
 /// Define to 1 if you have the <execinfo.h> header file.
 #define CUTIE_HAVE_EXECINFO_H @HAVE_EXECINFO_H@
+
+#endif
 
 /// ./configure --enable-aliases
 #define CUTIE_ENABLE_ALIASES @ENABLE_ALIASES@
@@ -576,6 +607,7 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_);
 
 /**@}*/ //group:class
 
+#ifndef CUTIE_KERNEL
 /**
  * Handle irrecoverable errors. This is cuties default user
  * space panic() function.
@@ -586,6 +618,7 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_);
  * http://www.gnu.org/s/hello/manual/libc/Backtraces.html
  */
 void panic(const char* const, ...);
+#endif
 
 /**
  * Allocate @p n bytes, usually a wrapper for #malloc. NULL
@@ -593,7 +626,11 @@ void panic(const char* const, ...);
  */
 static inline void* walloc(const size_t n)
 {
+#ifndef CUTIE_KERNEL
 	return malloc(n);
+#elif CUTIE_KERNEL_CK(CUTIE_KERNEL_LINUX)
+	return kmalloc(n, GFP_KERNEL);
+#endif
 }
 
 /**
@@ -602,7 +639,11 @@ static inline void* walloc(const size_t n)
  */
 static inline void wfree(void* p)
 {
+#ifndef CUTIE_KERNEL
 	free(p);
+#elif CUTIE_KERNEL_CK(CUTIE_KERNEL_LINUX)
+	kfree(p);
+#endif
 }
 
 #ifdef __cplusplus
