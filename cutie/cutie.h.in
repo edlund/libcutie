@@ -262,6 +262,7 @@ extern "C" {
 	}; \
 	Name* CPP_CAT(new_, Name)(Name* ptr_, ...) \
 	{ \
+		va_list args_; \
 		Name* obj_ = (Name*) \
 			(ptr_? ptr_: walloc(sizeof(Name))); \
 		if (obj_) { \
@@ -273,7 +274,6 @@ extern "C" {
 			class_qcast(obj_, Object)->mtbl_ = (struct mtbl_Object*) \
 				&CPP_CAT(mtbl_, Name); \
 			class_qcast(obj_, Object)->metadata_ = &CPP_CAT(metadata_, Name); \
-			va_list args_; \
 			va_start(args_, ptr_); \
 			class_mtbl(obj_, Object)->Constructor(obj_, &args_); \
 			va_end(args_); \
@@ -308,8 +308,8 @@ extern "C" {
 #define class_begin_ctor(Name, Parent) \
 	void CPP_CAT(Name, _Constructor)(void* const self_, va_list* args_) \
 	{ \
-		CPP_CAT(Parent, _Constructor)(self_, args_); \
 		Name* const self = (Name*)self_; \
+		CPP_CAT(Parent, _Constructor)(self_, args_); \
 		(void)self;
 /**
  * @endof class_begin_ctor().
