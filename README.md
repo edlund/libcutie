@@ -39,13 +39,34 @@ You need the following things to successfully compile cutie:
  * Check unit test framework, http://check.sourceforge.net/
  * Python (2.7+)
 
-Configuring, compiling, testing and installing cutie can then be as simple as:
+If you plan to use cutie for user space development, configuring, compiling,
+testing and installing cutie can then be as simple as:
 
     libcutie$ autoreconf -i
     libcutie$ ./configure && make && make check && sudo -k make install
 
 You can then #include cutie.h and link with -lcutie. For more options, simply
 run `./configure --help`.
+
+If you plan to use cutie for kernel space development, the best option is
+probably to use the amalgamation:
+
+    libcutie$ autoreconf -i
+    libcutie$ ./configure && make && make check && make amalgamation
+
+Running the above commands will create `cutie.h` and `cutie.c` in your top
+build directory.
+
+ * Add `cutie.h` to an include path for your project.
+ * Make sure that `cutie.c` is compiled and linked with your project.
+ * Define `CUTIE_KERNEL` to a suitable value. 
+
+It is theoretically possible to handle kernel environments not officially
+supported by using the following workaround:
+
+ * Define `CUTIE_KERNEL` to `CUTIE_KERNEL_CUSTOM`.
+ * Write your own config include header.
+ * Define `CUTIE_KERNEL_CUSTOM_INCLUDE` to refer to your config header.
 
 ## Getting started
 
