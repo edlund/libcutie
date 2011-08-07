@@ -111,7 +111,7 @@ void ClassDefaultAbstractHandler(const char* const name_, const char*
 
 #endif
 
-#ifndef CUTIE_KERNEL
+#if CUTIE_KERNEL_CK(CUTIE_KERNEL_NONE)
 #include <signal.h>
 #include <stdio.h>
 #if CUTIE_HAVE_EXECINFO_H

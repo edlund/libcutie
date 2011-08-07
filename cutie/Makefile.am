@@ -3,6 +3,7 @@ AM_CFLAGS = \
 	-std=c99 \
 	-Wall \
 	-Wextra \
+	-Wundef \
 	-Wno-missing-field-initializers \
 	-Werror \
 	-pedantic \

@@ -42,19 +42,17 @@
  */
 
 /**
- * Determine if the kernel @p Name is detected (for example
- * @p CUTIE_KERNEL_LINUX).
+ * Check @p Kernel against CUTIE_KERNEL.
  */
-#define CUTIE_KERNEL_CK(Name) \
-	defined(CUTIE_KERNEL) && CUTIE_KERNEL == Name
+#define CUTIE_KERNEL_CK(Kernel) \
+	(CUTIE_KERNEL & (Kernel))
 
-/// Linux kernel.
-#define CUTIE_KERNEL_LINUX linux
-#ifdef __KERNEL__
-#define CUTIE_KERNEL CUTIE_KERNEL_LINUX
-#endif
+#define CUTIE_KERNEL_NONE               1
+#define CUTIE_KERNEL_CUSTOM             2
+#define CUTIE_KERNEL_LINUX              4
 
 #ifndef CUTIE_KERNEL
+#define CUTIE_KERNEL CUTIE_KERNEL_NONE
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -67,18 +65,22 @@
 #include <linux/types.h>
 #include <stdarg.h>
 #define CUTIE_STDC 0
+#elif CUTIE_KERNEL_CK(CUTIE_KERNEL_CUSTOM)
+#ifndef CUTIE_KERNEL_CUSTOM_INCLUDE
+#error "CUTIE_KERNEL_CUSTOM_INCLUDE must be defined."
+#else
+#include CUTIE_KERNEL_CUSTOM_INCLUDE
+#endif // CUTIE_KERNEL_CUSTOM_INCLUDE
 #else
 #error "CUTIE_KERNEL is set, but unsupported."
-#endif
+#endif // CUTIE_KERNEL
 
-#ifndef CUTIE_KERNEL
-/* User space specific configuration.
- */
+#if CUTIE_KERNEL_CK(CUTIE_KERNEL_NONE)
 
 /// Define to 1 if you have the <execinfo.h> header file.
 #define CUTIE_HAVE_EXECINFO_H @HAVE_EXECINFO_H@
 
-#endif
+#endif // CUTIE_KERNEL_CK
 
 /// ./configure --enable-aliases
 #define CUTIE_ENABLE_ALIASES @ENABLE_ALIASES@
@@ -90,13 +92,13 @@
 /// Define to one to require compiler C99 support to be
 /// directly detectable.
 #define CUTIE_STDC 1
-#endif
+#endif // CUTIE_STDC
 #if CUTIE_STDC && ( \
 		!defined(__STDC__) || __STDC__ == 0 || \
 		!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L \
 	)
 #error "An ISO C99 compiler and preprocessor is required."
-#endif
+#endif // CUTIE_STDC
 
 /**@}*/ //group:config
 
@@ -603,11 +605,11 @@ extern ClassAbstractHandler classAbstractHandler_;
 ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_);
 
 /**@}*/ //group:abstract
-#endif
+#endif // CUTIE_ENABLE_ABSTRACT
 
 /**@}*/ //group:class
 
-#ifndef CUTIE_KERNEL
+#if CUTIE_KERNEL_CK(CUTIE_KERNEL_NONE)
 /**
  * Handle irrecoverable errors. This is cuties default user
  * space panic() function.
@@ -618,7 +620,9 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_);
  * http://www.gnu.org/s/hello/manual/libc/Backtraces.html
  */
 void panic(const char* const, ...);
-#endif
+#endif // CUTIE_KERNEL_CK
+
+#if !CUTIE_KERNEL_CK(CUTIE_KERNEL_CUSTOM)
 
 /**
  * Allocate @p n bytes, usually a wrapper for #malloc. NULL
@@ -626,11 +630,11 @@ void panic(const char* const, ...);
  */
 static inline void* walloc(const size_t n)
 {
-#ifndef CUTIE_KERNEL
+#if CUTIE_KERNEL_CK(CUTIE_KERNEL_NONE)
 	return malloc(n);
 #elif CUTIE_KERNEL_CK(CUTIE_KERNEL_LINUX)
 	return kmalloc(n, GFP_KERNEL);
-#endif
+#endif // CUTIE_KERNEL_CK
 }
 
 /**
@@ -639,16 +643,18 @@ static inline void* walloc(const size_t n)
  */
 static inline void wfree(void* p)
 {
-#ifndef CUTIE_KERNEL
+#if CUTIE_KERNEL_CK(CUTIE_KERNEL_NONE)
 	free(p);
 #elif CUTIE_KERNEL_CK(CUTIE_KERNEL_LINUX)
 	kfree(p);
-#endif
+#endif // CUTIE_KERNEL_CK
 }
+
+#endif // CUTIE_KERNEL_CK
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif // CUTIE_H
 
