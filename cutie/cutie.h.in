@@ -88,6 +88,9 @@
 /// ./configure --enable-abstract
 #define CUTIE_ENABLE_ABSTRACT @ENABLE_ABSTRACT@
 
+/// ./configure --enable-memzero-new
+#define CUTIE_ENABLE_MEMZERO_NEW @ENABLE_MEMZERO_NEW@
+
 #ifndef CUTIE_STDC
 /// Define to one to require compiler C99 support to be
 /// directly detectable.
@@ -244,9 +247,7 @@ extern "C" {
  * function pointers set to @p NULL before new_X() has been
  * called at least once. Since method tables are initialized
  * from bottom to top, this makes it possible to override
- * a parent method for a child class. Each method table is
- * assigned to X_Init, which will implicitly set all function
- * pointers to @p NULL. See #Object_Init for more info.
+ * a parent method for a child class.
  * 
  * Notes about new_X():
  * 
@@ -255,7 +256,7 @@ extern "C" {
  * allocation failed.
  */
 #define class_begin_impl(Name, Parent) \
-	struct CPP_CAT(mtbl_, Name) CPP_CAT(mtbl_, Name) = CPP_CAT(Name, _Init); \
+	struct CPP_CAT(mtbl_, Name) CPP_CAT(mtbl_, Name); \
 	struct metadata_Class CPP_CAT(metadata_, Name) = { \
 		.parent_ = &CPP_CAT(metadata_, Parent), \
 		.name_ = CPP_STR(Name), \
@@ -272,6 +273,9 @@ extern "C" {
 				CPP_CAT(populate_mtbl_, Name)(&CPP_CAT(mtbl_, Name), \
 					CPP_STR(Name)); \
 				CPP_CAT(metadata_, Name).populated_ = true; \
+			} \
+			if (CUTIE_ENABLE_MEMZERO_NEW) { \
+				wmemzero(obj_, sizeof(Name)); \
 			} \
 			class_qcast(obj_, Object)->mtbl_ = (struct mtbl_Object*) \
 				&CPP_CAT(mtbl_, Name); \
@@ -422,29 +426,6 @@ void Object_Destructor(void* const);
 void Object_Clone(self(Object), Object* original);
 
 /**@}*/ //group:Object
-
-/**
- * Initializes the method table for Object.
- * 
- * All sub-classes needs to define
- * @code
- * #define ClassName_Init { ParentName_Init }
- * @endcode
- * in order to make sure that all method tables for the class
- * are correctly initialized.
- * 
- * For example, if Test inherited Object, it would be required
- * to define
- * @code
- * #define Test_Init { Object_Init }
- * @endcode
- * before class_begin_impl() / class_end_impl() for Test is
- * encountered (preferably in a header file).
- * 
- * Requires @p -Wno-missing-field-initializers when compiling
- * against @p -Wall and @p -Wextra with gcc and/or clang.
- */
-#define Object_Init { NULL }
 
 /**
  * Get the class name for the given @p Instance.
@@ -648,6 +629,15 @@ static inline void wfree(void* p)
 #elif CUTIE_KERNEL_CK(CUTIE_KERNEL_LINUX)
 	kfree(p);
 #endif // CUTIE_KERNEL_CK
+}
+
+/**
+ * Set @p n bytes pointed to by @p p to zero, usually a
+ * wrapper for #memset.
+ */
+static inline void wmemzero(void* p, const size_t n)
+{
+	memset(p, 0, n);
 }
 
 #endif // CUTIE_KERNEL_CK

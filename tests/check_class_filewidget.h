@@ -10,8 +10,6 @@ class_begin_def(FileWidget, Widget)
 	FILE* file;
 class_end_def(FileWidget, Widget)
 
-#define FileWidget_Init { Widget_Init }
-
 class_begin_methods(FileWidget, Widget)
 	int (*GetC)(self(FileWidget));
 	int (*CloseFile)(self(FileWidget));

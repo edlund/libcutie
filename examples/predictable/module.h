@@ -15,8 +15,6 @@ class_begin_def(PredictableNumGen, Object)
 	int32_t seed_;
 class_end_def(PredictableNumGen, Object)
 
-#define PredictableNumGen_Init { Object_Init }
-
 class_begin_methods(PredictableNumGen, Object)
 	int (*Setup)(self(PredictableNumGen));
 	void (*Reseed)(self(PredictableNumGen), int32_t);

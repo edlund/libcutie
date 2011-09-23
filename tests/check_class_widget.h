@@ -21,8 +21,6 @@ class_begin_def(Widget, Object)
 	Color color;
 class_end_def(Widget, Object)
 
-#define Widget_Init { Object_Init }
-
 class_begin_methods(Widget, Object)
 	void (*Rename)(self(Widget), const char* const name);
 	void (*Colorize)(self(Widget), const unsigned char r, const

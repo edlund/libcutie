@@ -6,8 +6,6 @@
 class_begin_def(EmptyGizmo, Object)
 class_end_def(EmptyGizmo, Object)
 
-#define EmptyGizmo_Init { Object_Init }
-
 class_begin_methods(EmptyGizmo, Object)
 class_end_methods(EmptyGizmo, Object)
 

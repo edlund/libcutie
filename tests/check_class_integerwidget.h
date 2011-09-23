@@ -7,8 +7,6 @@ class_begin_def(IntegerWidget, Widget)
 	int n;
 class_end_def(IntegerWidget, Widget)
 
-#define IntegerWidget_Init { Widget_Init }
-
 class_begin_methods(IntegerWidget, Widget)
 class_end_methods(IntegerWidget, Widget)
 

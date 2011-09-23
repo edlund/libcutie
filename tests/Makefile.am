@@ -4,7 +4,6 @@ AM_CFLAGS = \
 	-Wall \
 	-Werror \
 	-Wextra \
-	-Wno-missing-field-initializers \
 	-pedantic \
 	-I$(top_srcdir)/cutie \
 	-D_GNU_SOURCE \

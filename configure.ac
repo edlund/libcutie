@@ -50,6 +50,19 @@ AC_ARG_ENABLE([abstract],
 	[ENABLE_ABSTRACT=1])
 AC_SUBST(ENABLE_ABSTRACT)
 
+AC_ARG_ENABLE([memzero-new],
+	[AC_HELP_STRING([--enable-memzero-new],
+		[zero new objects [default=yes]])],
+	[
+		case $enableval in
+			yes) ENABLE_MEMZERO_NEW=1 ;;
+			no) ENABLE_MEMZERO_NEW=0 ;;
+			*) AC_MSG_ERROR([bad value for --enable-memzero-new: yes or no])
+		esac
+	],
+	[ENABLE_MEMZERO_NEW=1])
+AC_SUBST(ENABLE_MEMZERO_NEW)
+
 AC_DEFINE([ENABLE_CHECK_FORK], [],
 	[Define to one to 1 to run tests in a separate address space])
 AC_ARG_ENABLE([check_fork],

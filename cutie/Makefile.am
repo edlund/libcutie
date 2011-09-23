@@ -4,7 +4,6 @@ AM_CFLAGS = \
 	-Wall \
 	-Wextra \
 	-Wundef \
-	-Wno-missing-field-initializers \
 	-Werror \
 	-pedantic \
 	@GCOV_CFLAGS@

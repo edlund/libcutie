@@ -8,8 +8,6 @@
 class_begin_def(AbstractGizmo, Object)
 class_end_def(AbstractGizmo, Object)
 
-#define AbstractGizmo_Init { Object_Init }
-
 class_begin_methods(AbstractGizmo, Object)
 	void (*Transmogrify)(self(AbstractGizmo));
 class_end_methods(AbstractGizmo, Object)
