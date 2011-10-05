@@ -37,7 +37,7 @@ You need the following things to successfully compile cutie:
  * GNU autotools, http://www.gnu.org/software/autoconf/
  * libtool, http://www.gnu.org/software/libtool/
  * Check unit test framework, http://check.sourceforge.net/
- * Python (2.7+)
+ * Python (2.7+), http://www.python.org/
 
 If you plan to use cutie for user space development, configuring, compiling,
 testing and installing cutie can then be as simple as:
