@@ -1,0 +1,66 @@
+
+#include <stdlib.h>
+
+// #include "bar.h"
+#ifndef BAR_H
+#define BAR_H
+
+// #include "foo.h"
+#ifndef FOO_H
+#define FOO_H
+
+// #include "bar.h"
+// #include <bar.h>
+/* #include "bar.h" */
+/* #include <bar.h> */
+
+int foo();
+
+#endif // FOO_H
+
+
+
+int bar();
+
+#endif // BAR_H
+
+
+// #include "test.h"
+#ifndef TEST_H
+#define TEST_H
+
+#undef NDEBUG
+#include <assert.h>
+
+#endif // TEST_H
+
+
+
+const char* include_foo = "#include \"foo.h\"";
+const char* include_bar = "#include \"bar.h\"";
+
+int main(int argc, char* argv[])
+{
+	assert(foo() == 1);
+	assert(bar() == 2);
+	return EXIT_SUCCESS;
+}
+
+
+// #include "foo.h"
+
+
+int foo()
+{
+	return 1;
+}
+
+
+// #include "bar.h"
+
+
+int bar()
+{
+	return 1 + foo();
+}
+

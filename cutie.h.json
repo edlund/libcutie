@@ -1,0 +1,11 @@
+{
+	"project": "libcutie",
+	"target": "cutie.h",
+	"sources": [
+		"include/cutie.h"
+	],
+	"include_paths": [
+		"include"
+	]
+}
+

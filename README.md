@@ -70,7 +70,7 @@ supported by using the following workaround:
 
 ## Getting started
 
-Have a look at the examples/ and tests/.
+Have a look in the directories example/ and test/.
 
 ## Uninstalling cutie
 

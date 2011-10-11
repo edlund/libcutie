@@ -1,0 +1,112 @@
+/* cutie - C UTilitIEs
+ * Copyright (c) 2011, Erik Edlund <erik.o.edlund@gmail.com>
+ * 
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 
+ *  * Redistributions of source code must retain the above copyright notice,
+ *  this list of conditions and the following disclaimer.
+ * 
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *  this list of conditions and the following disclaimer in the documentation
+ *  and/or other materials provided with the distribution.
+ * 
+ *  * Neither the name of Erik Edlund, nor the names of its contributors may
+ *  be used to endorse or promote products derived from this software without
+ *  specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef CUTIE_CONFIG_H
+#define CUTIE_CONFIG_H
+
+/**
+ * @defgroup config config
+ * Global cutie configuration.
+ * @{
+ */
+
+#ifdef __cplusplus
+#define CUTIE_BEGIN_EXTERN_C extern "C" {
+#define CUTIE_END_EXTERN_C }
+#else
+#define CUTIE_BEGIN_EXTERN_C
+#define CUTIE_END_EXTERN_C
+#endif
+
+/**
+ * Check @p Kernel against CUTIE_KERNEL.
+ */
+#define CUTIE_KERNEL_CK(Kernel) \
+	(CUTIE_KERNEL & (Kernel))
+
+#define CUTIE_KERNEL_NONE               1
+#define CUTIE_KERNEL_CUSTOM             2
+#define CUTIE_KERNEL_LINUX              4
+
+#ifndef CUTIE_KERNEL
+#define CUTIE_KERNEL CUTIE_KERNEL_NONE
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#elif CUTIE_KERNEL_CK(CUTIE_KERNEL_LINUX)
+#include <linux/kernel.h>
+#include <linux/slab.h>
+#include <linux/stddef.h>
+#include <linux/string.h>
+#include <linux/types.h>
+#include <stdarg.h>
+#define CUTIE_STDC 0
+#elif CUTIE_KERNEL_CK(CUTIE_KERNEL_CUSTOM)
+#ifndef CUTIE_KERNEL_CUSTOM_INCLUDE
+#error "CUTIE_KERNEL_CUSTOM_INCLUDE must be defined."
+#else
+#include CUTIE_KERNEL_CUSTOM_INCLUDE
+#endif // CUTIE_KERNEL_CUSTOM_INCLUDE
+#else
+#error "CUTIE_KERNEL is set, but unsupported."
+#endif // CUTIE_KERNEL
+
+#if CUTIE_KERNEL_CK(CUTIE_KERNEL_NONE)
+
+/// Define to 1 if you have the <execinfo.h> header file.
+#define CUTIE_HAVE_EXECINFO_H @HAVE_EXECINFO_H@
+
+#endif // CUTIE_KERNEL_CK
+
+/// ./configure --enable-aliases
+#define CUTIE_ENABLE_ALIASES @ENABLE_ALIASES@
+
+/// ./configure --enable-abstract
+#define CUTIE_ENABLE_ABSTRACT @ENABLE_ABSTRACT@
+
+/// ./configure --enable-memzero-new
+#define CUTIE_ENABLE_MEMZERO_NEW @ENABLE_MEMZERO_NEW@
+
+#ifndef CUTIE_STDC
+/// Define to one to require compiler C99 support to be
+/// directly detectable.
+#define CUTIE_STDC 1
+#endif // CUTIE_STDC
+#if CUTIE_STDC && ( \
+		!defined(__STDC__) || __STDC__ == 0 || \
+		!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L \
+	)
+#error "An ISO C99 compiler and preprocessor is required."
+#endif // CUTIE_STDC
+
+/**@}*/ //group:config
+
+#endif // CUTIE_CONFIG_H
+

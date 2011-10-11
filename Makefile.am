@@ -2,19 +2,21 @@
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
-	cutie \
-	examples \
-	tests
+	include \
+	source \
+	example \
+	test \
+	tool
 
 CLEANFILES = \
 	cutie.c \
 	cutie.h
 
 amalgamation:
-	export \
-		top_srcdir=$(top_srcdir) \
-		top_builddir=$(top_builddir) \
-	&& $(top_srcdir)/tools/amalgamate.sh
+	$(top_srcdir)/tool/amalgamate/amalgamate.py \
+		--config $(top_srcdir)/cutie.h.json
+	$(top_srcdir)/tool/amalgamate/amalgamate.py \
+		--config $(top_srcdir)/cutie.c.json
 
 clean-local:
 	rm -rf dox/*

@@ -1,0 +1,12 @@
+{
+	"project": "libcutie",
+	"target": "cutie.c",
+	"sources": [
+		"source/class.c",
+		"source/panic.c"
+	],
+	"include_paths": [
+		"include"
+	]
+}
+

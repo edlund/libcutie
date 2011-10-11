@@ -94,13 +94,17 @@ if test x$ENABLE_GCOV = xtrue ; then
 fi
 AM_CONDITIONAL(ENABLE_GCOV, test x"$ENABLE_GCOV" = "xtrue")
 
-AC_CONFIG_HEADERS([cutie/config.h])
+AC_CONFIG_HEADERS([include/config.h])
 AC_CONFIG_FILES([
 	Makefile
-	cutie/Makefile
-	examples/Makefile
-	examples/robots/Makefile
-	tests/Makefile
-	cutie/cutie.h])
+	include/Makefile
+	source/Makefile
+	example/Makefile
+	example/trivial/Makefile
+	test/Makefile
+	tool/Makefile
+	tool/amalgamate/Makefile
+	tool/amalgamate/test/Makefile
+	include/cutie/config.h])
 AC_OUTPUT
 
