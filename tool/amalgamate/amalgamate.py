@@ -11,18 +11,16 @@ import sys
 
 class Amalgamation(object):
 	
-	@staticmethod
-	def file_path(file_path, include_paths):
-		file_found = os.path.exists(file_path)
-		if file_found:
-			return file_path
+	def file_path(self, file_path, include_paths=None):
+		if include_paths == None:
+			include_paths = self.include_paths
 		
-		for include_path in include_paths:
-			tmp_path = "{0}/{1}".format(include_path, file_path)
-			file_found = os.path.exists(tmp_path)
-			if file_found:
+		paths = [os.path.join(self.source_path, path) for path in include_paths]
+		paths.insert(0, self.source_path)
+		for path in paths:
+			tmp_path = os.path.join(path, file_path)
+			if os.path.exists(tmp_path):
 				return tmp_path
-		
 		return None
 	
 	def __init__(self, args):
@@ -30,37 +28,42 @@ class Amalgamation(object):
 			config = json.loads(f.read())
 			for key in config:
 				setattr(self, key, config[key])
+			
+			self.verbose = args.verbose == 'yes'
+			self.source_path = args.source_path
 			self.included_files = []
 	
 	def generate(self):
 		amalgamation = ""
 		
-		print("Config:")
-		print(" target        = {0}".format(self.target))
-		print(" working_dir   = {0}".format(os.getcwd()))
-		print(" include_paths = {0}".format(self.include_paths))
+		if self.verbose:
+			print("Config:")
+			print(" target        = {0}".format(self.target))
+			print(" working_dir   = {0}".format(os.getcwd()))
+			print(" include_paths = {0}".format(self.include_paths))
 		print("Creating amalgamation:")
 		for file_path in self.sources:
-			print(" - processing \"{0}\"".format(file_path))
 			# Do not check the include paths while processing the source
 			# list, all given source paths must be correct.
-			if not Amalgamation.file_path(file_path, []):
+			actual_path = self.file_path(file_path, [])
+			print(" - processing \"{0}\"".format(actual_path))
+			if not actual_path:
 				raise IOError("File not found: \"{0}\"".format(file_path))
-			tunit = TranslationUnit(file_path, self.include_paths,
-				self.included_files)
+			tunit = TranslationUnit(actual_path, self)
 			amalgamation += tunit.content
 		
 		with open(self.target, 'w') as f:
 			f.write(amalgamation)
 		
 		print("...done!\n")
-		print("Files processed: {0}".format(self.sources))
-		print("Files included: {0}".format(self.included_files))
+		if self.verbose:
+			print("Files processed: {0}".format(self.sources))
+			print("Files included: {0}".format(self.included_files))
 		print("")
 
 class TranslationUnit(object):
 	
-	def _include_files(self, included_files):
+	def _include_files(self):
 		# Find contexts in the content in which a found include
 		# directive should be ignored.
 		skippable_matches = []
@@ -83,8 +86,7 @@ class TranslationUnit(object):
 					should_include = False
 					break
 			include_path = include_match.group("path")
-			actual_path = Amalgamation.file_path(include_path,
-				self.include_paths)
+			actual_path = self.amalgamation.file_path(include_path)
 			if should_include and actual_path:
 				includes.append((include_match, actual_path))
 			
@@ -98,9 +100,8 @@ class TranslationUnit(object):
 			include_match, actual_path = include
 			tmp_content += self.content[prev_end:include_match.start()]
 			tmp_content += "// {0}\n".format(include_match.group(0))
-			if not actual_path in included_files:
-				tunit = TranslationUnit(actual_path, self.include_paths,
-					included_files)
+			if not actual_path in self.amalgamation.included_files:
+				tunit = TranslationUnit(actual_path, self.amalgamation)
 				tmp_content += tunit.content
 			prev_end = include_match.end()
 		tmp_content += self.content[prev_end:]
@@ -108,11 +109,11 @@ class TranslationUnit(object):
 		
 		return len(includes)
 	
-	def __init__(self, file_path, include_paths, included_files):
+	def __init__(self, file_path, amalgamation):
 		self.file_path = file_path
-		self.include_paths = include_paths
+		self.amalgamation = amalgamation
 		
-		included_files.append(self.file_path)
+		self.amalgamation.included_files.append(self.file_path)
 		
 		with open(self.file_path, 'r') as f:
 			self.content = f.read()
@@ -129,14 +130,21 @@ class TranslationUnit(object):
 			self.include_pattern = re.compile(
 				r'#\s*include\s*(<|")(?P<path>.*?)("|>)', re.S)
 			
-			self._include_files(included_files)
+			self._include_files()
 
 def main():
 	argsparser = argparse.ArgumentParser(
 		description="Amalgamate C source and header files.",
-		usage="amalgamate.py -c path/to/config.json")
-	argsparser.add_argument('-c', '--config', dest='config', required=True,
-		metavar="", help="path to a JSON config file")
+		usage="amalgamate.py [-v] -c path/to/config.json -s path/to/source/dir")
+	
+	argsparser.add_argument('-v', '--verbose', dest='verbose',
+		choices=['yes', 'no'], metavar="", help="be verbose")
+	
+	argsparser.add_argument('-c', '--config', dest='config',
+		required=True, metavar="", help="path to a JSON config file")
+	
+	argsparser.add_argument('-s', '--source', dest='source_path',
+		required=True, metavar="", help="source code path")
 	
 	amalgamation = Amalgamation(argsparser.parse_args())
 	amalgamation.generate()

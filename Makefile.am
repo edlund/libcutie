@@ -14,9 +14,11 @@ CLEANFILES = \
 
 amalgamation:
 	$(top_srcdir)/tool/amalgamate/amalgamate.py \
-		--config $(top_srcdir)/cutie.h.json
+		--config=$(top_srcdir)/cutie.h.json --source=$(top_srcdir) \
+		--verbose=yes
 	$(top_srcdir)/tool/amalgamate/amalgamate.py \
-		--config $(top_srcdir)/cutie.c.json
+		--config=$(top_srcdir)/cutie.c.json --source=$(top_srcdir) \
+		--verbose=yes
 
 clean-local:
 	rm -rf dox/*
