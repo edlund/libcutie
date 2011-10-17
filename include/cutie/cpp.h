@@ -27,8 +27,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CONFIG_CPP_H
-#define CONFIG_CPP_H
+#ifndef CUTIE_CPP_H
+#define CUTIE_CPP_H
 
 /**
  * @defgroup cpp cpp
@@ -65,5 +65,5 @@
 
 /**@}*/ //group:cpp
 
-#endif // CONFIG_CPP_H
+#endif // CUTIE_CPP_H
 
