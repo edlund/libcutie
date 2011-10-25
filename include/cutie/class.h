@@ -139,7 +139,9 @@ CUTIE_BEGIN_EXTERN_C
  * function pointers set to @p NULL before new_X() has been
  * called at least once. Since method tables are initialized
  * from bottom to top, this makes it possible to override
- * a parent method for a child class.
+ * a parent method for a child class. Method tables are
+ * assumed to be initialized by the compiler in accordance
+ * with 6.7.8 of ISO C99.
  * 
  * Notes about new_X():
  * 

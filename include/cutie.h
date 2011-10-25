@@ -27,11 +27,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @file cutie.h
- * @brief C UTilitIEs
- */
-
 #ifndef CUTIE_H
 #define CUTIE_H
 

@@ -34,7 +34,7 @@
 #include <stdio.h>
 #if CUTIE_HAVE_EXECINFO_H
 #include <execinfo.h>
-#endif
+#endif // CUTIE_HAVE_EXECINFO_H
 
 void panic(const char* const format_, ...)
 {
@@ -52,8 +52,8 @@ void panic(const char* const format_, ...)
 			fprintf(stderr, "%s\n", symbols_[i]);
 	}
 	free(symbols_);
-#endif
+#endif // CUTIE_HAVE_EXECINFO_H
 	raise(SIGKILL);
 }
-#endif
+#endif // CUTIE_KERNEL_CK
 

@@ -11,7 +11,7 @@ Run
 and copy `libcutie/cutie.h` and `libcutie/cutie.c` to this directory. You can
 then test the module by running:
 
-    libcutie/examples/predictable$ make check
+    libcutie/example/predictable$ make check
 
 Observe: It is recommended that you do NOT try this on a machine important to
 you. Use a virtual machine if possible.

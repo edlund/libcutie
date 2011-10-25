@@ -40,7 +40,9 @@
 #define CUTIE_BEGIN_EXTERN_C extern "C" {
 #define CUTIE_END_EXTERN_C }
 #else
+/// Begin C linkage.
 #define CUTIE_BEGIN_EXTERN_C
+/// End C linkage.
 #define CUTIE_END_EXTERN_C
 #endif
 
@@ -50,9 +52,14 @@
 #define CUTIE_KERNEL_CK(Kernel) \
 	(CUTIE_KERNEL & (Kernel))
 
-#define CUTIE_KERNEL_NONE               1
-#define CUTIE_KERNEL_CUSTOM             2
-#define CUTIE_KERNEL_LINUX              4
+/// User space (libc).
+#define CUTIE_KERNEL_NONE      1
+
+/// Custom kernel.
+#define CUTIE_KERNEL_CUSTOM    2
+
+/// Linux kernel.
+#define CUTIE_KERNEL_LINUX     4
 
 #ifndef CUTIE_KERNEL
 #define CUTIE_KERNEL CUTIE_KERNEL_NONE
