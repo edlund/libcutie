@@ -4,8 +4,10 @@
 #include "bar.h"
 #include "test.h"
 
-const char* include_foo = "#include \"foo.h\"";
-const char* include_bar = "#include \"bar.h\"";
+const char* include_foo1 = "#include \"foo.h\"";
+const char* include_bar1 = "#include \"bar.h\"";
+const char* include_foo2 = "#include <foo.h>";
+const char* include_bar2 = "#include <bar.h>";
 
 int main(int argc, char* argv[])
 {
