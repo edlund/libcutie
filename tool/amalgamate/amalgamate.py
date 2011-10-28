@@ -63,6 +63,18 @@ class Amalgamation(object):
 
 class TranslationUnit(object):
 	
+	skippable_patterns = [
+		re.compile(r'".*?(?<=[^\\])"'), # "complex \"string\" value"
+		re.compile(r"//.*?\n"),         # // comment
+		re.compile(r"/\*.*?\*/", re.S)  # /* comment */
+	]
+	
+	# Handle simple include directives. Support for advanced
+	# directives where macros and defines needs to expanded is
+	# not a concern right now.
+	include_pattern = re.compile(
+		r'#\s*include\s*(<|")(?P<path>.*?)("|>)', re.S)
+	
 	def _include_files(self):
 		# Find contexts in the content in which a found include
 		# directive should be ignored.
@@ -117,19 +129,6 @@ class TranslationUnit(object):
 		
 		with open(self.file_path, 'r') as f:
 			self.content = f.read()
-			
-			self.skippable_patterns = [
-				re.compile(r'".*?(?<=[^\\])"'), # "complex \"string\" value"
-				re.compile(r"//.*?\n"),         # // comment
-				re.compile(r"/\*.*?\*/", re.S)  # /* comment */
-			]
-			
-			# Handle simple include directives. Support for advanced
-			# directives where macros and defines needs to expanded is
-			# not a concern right now.
-			self.include_pattern = re.compile(
-				r'#\s*include\s*(<|")(?P<path>.*?)("|>)', re.S)
-			
 			self._include_files()
 
 def main():
