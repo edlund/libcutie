@@ -21,6 +21,7 @@ START_TEST(test_CPP_CAT)
 	#define MUST_EXPAND Var
 	CPP_CAT(my, MUST_EXPAND) = 2;
 	#undef MUST_EXPAND
+	UNUSED(myVar);
 END_TEST
 
 Suite* cpp_suite(void)
