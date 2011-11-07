@@ -31,6 +31,7 @@ check_PROGRAMS = \
 class_SOURCES = \
 	class.c \
 	class_abstractgizmo.c \
+	class_autogizmo.c \
 	class_emptygizmo.c \
 	class_widget.c \
 	class_filewidget.c \

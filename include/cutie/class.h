@@ -482,6 +482,57 @@ ClassAbstractHandler ClassSetAbstractHandler(ClassAbstractHandler handler_);
 /**@}*/ //group:abstract
 #endif // CUTIE_ENABLE_ABSTRACT
 
+#if CUTIE_ENABLE_AUTO
+/**
+ * @defgroup auto auto
+ * Support for automatic/scoped objects. In order to work,
+ * the compiler must support the cleanup variable attribute
+ * which is a gcc extension.
+ * @{
+ */
+
+#if defined(__GNUC__) || defined(__clang__)
+
+/**
+ * Create an @p Instance of @p Class which will be destroyed
+ * using class_auto_object_cleanup_() when it goes out of
+ * scope. This is achieved through the variable attribute
+ * "cleanup", which is a gcc extension.
+ * 
+ * http://gcc.gnu.org/onlinedocs/gcc/Variable-Attributes.html
+ */
+#define class_auto_object(Class, Instance) \
+	Class Instance __attribute__((cleanup(class_auto_object_cleanup_)))
+
+/**
+ * No constructor args.
+ */
+#define class_auto_object0(Class, Instance) \
+	class_auto_object(Class, Instance); \
+	CPP_CAT(new_, Class)(&Instance)
+
+/**
+ * One or more constructor args.
+ */
+#define class_auto_objectn(Class, Instance, ...) \
+	class_auto_object(Class, Instance); \
+	CPP_CAT(new_, Class)(&Instance, __VA_ARGS__)
+
+/**
+ * Cleanup function for auto objects.
+ */
+static inline void class_auto_object_cleanup_(const void* obj_)
+{
+	class_call0(obj_, Object, Destructor);
+}
+
+#else
+#error "__attribute__((cleanup(function))) is not supported by your compiler."
+#endif // __GNUC__ || __clang__
+
+/**@}*/ //group:auto
+#endif // CUTIE_ENABLE_AUTO
+
 /**@}*/ //group:class
 
 CUTIE_END_EXTERN_C

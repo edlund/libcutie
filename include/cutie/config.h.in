@@ -98,6 +98,9 @@
 /// ./configure --enable-abstract
 #define CUTIE_ENABLE_ABSTRACT @ENABLE_ABSTRACT@
 
+/// ./configure --enable-auto
+#define CUTIE_ENABLE_AUTO @ENABLE_AUTO@
+
 /// ./configure --enable-memzero-new
 #define CUTIE_ENABLE_MEMZERO_NEW @ENABLE_MEMZERO_NEW@
 

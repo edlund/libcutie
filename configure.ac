@@ -50,6 +50,19 @@ AC_ARG_ENABLE([abstract],
 	[ENABLE_ABSTRACT=1])
 AC_SUBST(ENABLE_ABSTRACT)
 
+AC_ARG_ENABLE([auto],
+	[AC_HELP_STRING([--enable-auto],
+		[support auto objects [default=yes]])],
+	[
+		case $enableval in
+			yes) ENABLE_AUTO=1 ;;
+			no) ENABLE_AUTO=0 ;;
+			*) AC_MSG_ERROR([bad value for --enable-auto: yes or no])
+		esac
+	],
+	[ENABLE_AUTO=1])
+AC_SUBST(ENABLE_AUTO)
+
 AC_ARG_ENABLE([memzero-new],
 	[AC_HELP_STRING([--enable-memzero-new],
 		[zero new objects [default=yes]])],

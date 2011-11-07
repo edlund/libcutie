@@ -10,12 +10,14 @@
 /* Class hierarchy:
  *   > Object
  *   -> AbstractGizmo
+ *   -> AutoGizmo
  *   -> EmptyGizmo
  *   -> Widget
  *   --> FileWidget
  *   --> IntegerWidget
  */
 #include "class_abstractgizmo.h"
+#include "class_autogizmo.h"
 #include "class_emptygizmo.h"
 #include "class_widget.h"
 #include "class_filewidget.h"
@@ -281,7 +283,28 @@ START_TEST(test_class_method_abstract)
 	ClassSetAbstractHandler(ClassDefaultAbstractHandler);
 END_TEST
 
-#endif
+#endif // CUTIE_ENABLE_ABSTRACT
+
+#if CUTIE_ENABLE_AUTO
+
+START_TEST(test_class_auto_object)
+	fail_unless(autoGizmoInstanceCounter == 0);
+	do {
+		class_auto_object0(AutoGizmo, gizmo);
+		fail_unless(autoGizmoInstanceCounter == 1);
+		for (int i = 0; i < 2; ++i) {
+			class_auto_object0(AutoGizmo, nestedGizmo);
+			fail_unless(autoGizmoInstanceCounter == 2);
+		}
+	} while (0);
+	fail_unless(autoGizmoInstanceCounter == 0);
+	
+	do {
+		class_auto_objectn(Widget, widget, "Widget", &TrendyColor);
+	} while (0);
+END_TEST
+
+#endif // CUTIE_ENABLE_AUTO
 
 Suite* class_suite(void)
 {
@@ -304,7 +327,10 @@ Suite* class_suite(void)
 	tcase_add_test(tc, test_class_clone);
 #if CUTIE_ENABLE_ABSTRACT
 	tcase_add_test(tc, test_class_method_abstract);
-#endif
+#endif // CUTIE_ENABLE_ABSTRACT
+#if CUTIE_ENABLE_AUTO
+	tcase_add_test(tc, test_class_auto_object);
+#endif // CUTIE_ENABLE_AUTO
 	
 	return s;
 }
