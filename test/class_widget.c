@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <check.h>
+#include "test.h"
 
 #include "class_widget.h"
 
@@ -61,14 +61,14 @@ class_end_dtor(Widget, Object)
 
 void CheckWidgetObject(Widget* w)
 {
-	fail_unless((struct mtbl_Widget*)((Object*)w)->mtbl_ == &mtbl_Widget);
-	fail_unless(((Object*)w)->metadata_ == &metadata_Widget);
-	fail_unless(class_mtbl(w, Object)->Constructor == Widget_Constructor);
-	fail_unless(class_mtbl(w, Object)->Destructor == Widget_Destructor);
-	fail_unless(class_mtbl(w, Object)->Clone == Widget_Clone);
-	fail_unless(class_mtbl(w, Widget)->Rename == Widget_Rename);
-	fail_unless(class_mtbl(w, Widget)->Colorize == Widget_Colorize);
-	fail_unless(class_mtbl(w, Widget)->Complexity == Widget_Complexity);
-	fail_unless(((Object*)w)->metadata_->size_ == sizeof(Widget));
+	ck_assert((struct mtbl_Widget*)((Object*)w)->mtbl_ == &mtbl_Widget);
+	ck_assert(((Object*)w)->metadata_ == &metadata_Widget);
+	ck_assert(class_mtbl(w, Object)->Constructor == Widget_Constructor);
+	ck_assert(class_mtbl(w, Object)->Destructor == Widget_Destructor);
+	ck_assert(class_mtbl(w, Object)->Clone == Widget_Clone);
+	ck_assert(class_mtbl(w, Widget)->Rename == Widget_Rename);
+	ck_assert(class_mtbl(w, Widget)->Colorize == Widget_Colorize);
+	ck_assert(class_mtbl(w, Widget)->Complexity == Widget_Complexity);
+	ck_assert(((Object*)w)->metadata_->size_ == sizeof(Widget));
 }
 

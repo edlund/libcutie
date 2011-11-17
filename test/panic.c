@@ -1,5 +1,5 @@
 
-#include <check.h>
+#include "test.h"
 #include <signal.h>
 #include <stdio.h>
 

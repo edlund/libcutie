@@ -1,5 +1,5 @@
 
-#include <check.h>
+#include "test.h"
 
 #include "class_autogizmo.h"
 
@@ -23,12 +23,12 @@ class_end_dtor(AutoGizmo, Object)
 
 void CheckAutoGizmoObject(AutoGizmo* a)
 {
-	fail_unless((struct mtbl_AutoGizmo*)((Object*)a)->mtbl_ == &mtbl_AutoGizmo);
-	fail_unless(((Object*)a)->metadata_ == &metadata_AutoGizmo);
-	fail_unless(class_mtbl(a, Object)->Constructor == AutoGizmo_Constructor);
-	fail_unless(class_mtbl(a, Object)->Destructor == AutoGizmo_Destructor);
-	fail_unless(class_mtbl(a, Object)->Clone == Object_Clone);
-	fail_unless(((Object*)a)->metadata_->size_ == sizeof(AutoGizmo));
+	ck_assert((struct mtbl_AutoGizmo*)((Object*)a)->mtbl_ == &mtbl_AutoGizmo);
+	ck_assert(((Object*)a)->metadata_ == &metadata_AutoGizmo);
+	ck_assert(class_mtbl(a, Object)->Constructor == AutoGizmo_Constructor);
+	ck_assert(class_mtbl(a, Object)->Destructor == AutoGizmo_Destructor);
+	ck_assert(class_mtbl(a, Object)->Clone == Object_Clone);
+	ck_assert(((Object*)a)->metadata_->size_ == sizeof(AutoGizmo));
 }
 
 #endif // CUTIE_ENABLE_AUTO

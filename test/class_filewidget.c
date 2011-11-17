@@ -1,5 +1,5 @@
 
-#include <check.h>
+#include "test.h"
 
 #include "class_filewidget.h"
 
@@ -65,17 +65,17 @@ class_end_dtor(FileWidget, Widget)
 
 void CheckFileWidgetObject(FileWidget* w)
 {
-	fail_unless((struct mtbl_FileWidget*)((Object*)w)->mtbl_ == &mtbl_FileWidget);
-	fail_unless(((Object*)w)->metadata_ == &metadata_FileWidget);
-	fail_unless(class_mtbl(w, Object)->Constructor == FileWidget_Constructor);
-	fail_unless(class_mtbl(w, Object)->Destructor == FileWidget_Destructor);
-	fail_unless(class_mtbl(w, Object)->Clone == FileWidget_Clone);
-	fail_unless(class_mtbl(w, Widget)->Rename == Widget_Rename);
-	fail_unless(class_mtbl(w, Widget)->Colorize == Widget_Colorize);
-	fail_unless(class_mtbl(w, Widget)->Complexity == FileWidget_Complexity);
-	fail_unless(class_mtbl(w, FileWidget)->GetC == FileWidget_GetC);
-	fail_unless(class_mtbl(w, FileWidget)->CloseFile == FileWidget_CloseFile);
-	fail_unless(class_mtbl(w, FileWidget)->OpenFile == FileWidget_OpenFile);
-	fail_unless(((Object*)w)->metadata_->size_ == sizeof(FileWidget));
+	ck_assert((struct mtbl_FileWidget*)((Object*)w)->mtbl_ == &mtbl_FileWidget);
+	ck_assert(((Object*)w)->metadata_ == &metadata_FileWidget);
+	ck_assert(class_mtbl(w, Object)->Constructor == FileWidget_Constructor);
+	ck_assert(class_mtbl(w, Object)->Destructor == FileWidget_Destructor);
+	ck_assert(class_mtbl(w, Object)->Clone == FileWidget_Clone);
+	ck_assert(class_mtbl(w, Widget)->Rename == Widget_Rename);
+	ck_assert(class_mtbl(w, Widget)->Colorize == Widget_Colorize);
+	ck_assert(class_mtbl(w, Widget)->Complexity == FileWidget_Complexity);
+	ck_assert(class_mtbl(w, FileWidget)->GetC == FileWidget_GetC);
+	ck_assert(class_mtbl(w, FileWidget)->CloseFile == FileWidget_CloseFile);
+	ck_assert(class_mtbl(w, FileWidget)->OpenFile == FileWidget_OpenFile);
+	ck_assert(((Object*)w)->metadata_->size_ == sizeof(FileWidget));
 }
 

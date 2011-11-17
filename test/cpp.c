@@ -1,5 +1,5 @@
 
-#include <check.h>
+#include "test.h"
 
 #include <config.h>
 #include <cutie.h>
@@ -15,9 +15,9 @@ END_TEST
 
 START_TEST(test_CPP_CAT)
 	int myVar = 0;
-	// Normal concat
+	// Normal concat.
 	CPP_CAT(my, Var) = 1;
-	// Concat with macro expansion
+	// Concat with macro expansion.
 	#define MUST_EXPAND Var
 	CPP_CAT(my, MUST_EXPAND) = 2;
 	#undef MUST_EXPAND

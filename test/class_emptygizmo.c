@@ -1,5 +1,5 @@
 
-#include <check.h>
+#include "test.h"
 
 #include "class_emptygizmo.h"
 
@@ -17,11 +17,11 @@ class_end_dtor(EmptyGizmo, Object)
 
 void CheckEmptyGizmoObject(EmptyGizmo* e)
 {
-	fail_unless((struct mtbl_EmptyGizmo*)((Object*)e)->mtbl_ == &mtbl_EmptyGizmo);
-	fail_unless(((Object*)e)->metadata_ == &metadata_EmptyGizmo);
-	fail_unless(class_mtbl(e, Object)->Constructor == EmptyGizmo_Constructor);
-	fail_unless(class_mtbl(e, Object)->Destructor == EmptyGizmo_Destructor);
-	fail_unless(class_mtbl(e, Object)->Clone == Object_Clone);
-	fail_unless(((Object*)e)->metadata_->size_ == sizeof(EmptyGizmo));
+	ck_assert((struct mtbl_EmptyGizmo*)((Object*)e)->mtbl_ == &mtbl_EmptyGizmo);
+	ck_assert(((Object*)e)->metadata_ == &metadata_EmptyGizmo);
+	ck_assert(class_mtbl(e, Object)->Constructor == EmptyGizmo_Constructor);
+	ck_assert(class_mtbl(e, Object)->Destructor == EmptyGizmo_Destructor);
+	ck_assert(class_mtbl(e, Object)->Clone == Object_Clone);
+	ck_assert(((Object*)e)->metadata_->size_ == sizeof(EmptyGizmo));
 }
 

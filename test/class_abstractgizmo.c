@@ -1,5 +1,5 @@
 
-#include <check.h>
+#include "test.h"
 
 #include "class_abstractgizmo.h"
 
@@ -20,13 +20,13 @@ class_end_dtor(AbstractGizmo, Object)
 
 void CheckAbstractGizmoObject(AbstractGizmo* a)
 {
-	fail_unless((struct mtbl_AbstractGizmo*)((Object*)a)->mtbl_ == &mtbl_AbstractGizmo);
-	fail_unless(((Object*)a)->metadata_ == &metadata_AbstractGizmo);
-	fail_unless(class_mtbl(a, Object)->Constructor == AbstractGizmo_Constructor);
-	fail_unless(class_mtbl(a, Object)->Destructor == AbstractGizmo_Destructor);
-	fail_unless(class_mtbl(a, Object)->Clone == Object_Clone);
-	fail_unless(class_mtbl(a, AbstractGizmo)->Transmogrify == NULL);
-	fail_unless(((Object*)a)->metadata_->size_ == sizeof(AbstractGizmo));
+	ck_assert((struct mtbl_AbstractGizmo*)((Object*)a)->mtbl_ == &mtbl_AbstractGizmo);
+	ck_assert(((Object*)a)->metadata_ == &metadata_AbstractGizmo);
+	ck_assert(class_mtbl(a, Object)->Constructor == AbstractGizmo_Constructor);
+	ck_assert(class_mtbl(a, Object)->Destructor == AbstractGizmo_Destructor);
+	ck_assert(class_mtbl(a, Object)->Clone == Object_Clone);
+	ck_assert(class_mtbl(a, AbstractGizmo)->Transmogrify == NULL);
+	ck_assert(((Object*)a)->metadata_->size_ == sizeof(AbstractGizmo));
 }
 
 #endif // CUTIE_ENABLE_ABSTRACT
