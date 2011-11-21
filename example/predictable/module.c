@@ -31,7 +31,7 @@ static int __init predictable_init(void)
 {
 	printk(KERN_INFO "predictable: init, seed=%d\n", seed);
 	new_PredictableNumGen(&predictableGenerator, seed);
-	return class_call0(&predictableGenerator, PredictableNumGen, Setup);
+	return class_call0(&predictableGenerator, PredictableNumGen, Init);
 } module_init(predictable_init);
 
 static void __exit predictable_exit(void)
@@ -43,8 +43,8 @@ static void __exit predictable_exit(void)
 // PredictableNumGen
 
 class_begin_impl(PredictableNumGen, Object)
-	class_method_impl(PredictableNumGen, Setup,
-		PredictableNumGen_Setup)
+	class_method_impl(PredictableNumGen, Init,
+		PredictableNumGen_Init)
 	class_method_impl(PredictableNumGen, Reseed,
 		PredictableNumGen_Reseed)
 	class_method_impl(PredictableNumGen, NextNumber,
@@ -64,7 +64,7 @@ class_begin_dtor(PredictableNumGen, Object)
 		remove_proc_entry("predictable", NULL);
 class_end_dtor(PredictableNumGen, Object)
 
-int PredictableNumGen_Setup(self(PredictableNumGen))
+int PredictableNumGen_Init(self(PredictableNumGen))
 {
 	self->procEntry_ = create_proc_entry("predictable", 0644, NULL);
 	if (!self->procEntry_) {

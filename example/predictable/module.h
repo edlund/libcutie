@@ -16,12 +16,12 @@ class_begin_def(PredictableNumGen, Object)
 class_end_def(PredictableNumGen, Object)
 
 class_begin_methods(PredictableNumGen, Object)
-	int (*Setup)(self(PredictableNumGen));
+	int (*Init)(self(PredictableNumGen));
 	void (*Reseed)(self(PredictableNumGen), int32_t);
 	int32_t (*NextNumber)(self(PredictableNumGen));
 class_end_methods(PredictableNumGen, Object)
 
-int PredictableNumGen_Setup(self(PredictableNumGen));
+int PredictableNumGen_Init(self(PredictableNumGen));
 void PredictableNumGen_Reseed(self(PredictableNumGen), int32_t);
 int32_t PredictableNumGen_NextNumber(self(PredictableNumGen));
 
