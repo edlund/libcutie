@@ -58,11 +58,16 @@ class Amalgamation(object):
 				setattr(self, key, config[key])
 			
 			self.verbose = args.verbose == 'yes'
+			self.prologue = args.prologue
 			self.source_path = args.source_path
 			self.included_files = []
 	
 	def generate(self):
 		amalgamation = ""
+		
+		if self.prologue:
+			with open(self.prologue, 'r') as f:
+				amalgamation += f.read()
 		
 		if self.verbose:
 			print("Config:")
@@ -160,22 +165,32 @@ class TranslationUnit(object):
 			self._include_files()
 
 def main():
+	usage = " ".join([
+		"amalgamate.py",
+		"[-v]",
+		"-c path/to/config.json",
+		"-s path/to/source/dir",
+		"[-p path/to/prologue.(c|h)]"
+	])
 	argsparser = argparse.ArgumentParser(
 		description="Amalgamate C source and header files.",
-		usage="amalgamate.py [-v] -c path/to/config.json -s path/to/source/dir")
+		usage=usage)
 	
-	argsparser.add_argument('-v', '--verbose', dest='verbose',
-		choices=['yes', 'no'], metavar="", help="be verbose")
+	argsparser.add_argument("-v", "--verbose", dest="verbose",
+		choices=["yes", "no"], metavar="", help="be verbose")
 	
-	argsparser.add_argument('-c', '--config', dest='config',
+	argsparser.add_argument("-c", "--config", dest="config",
 		required=True, metavar="", help="path to a JSON config file")
 	
-	argsparser.add_argument('-s', '--source', dest='source_path',
+	argsparser.add_argument("-s", "--source", dest="source_path",
 		required=True, metavar="", help="source code path")
+	
+	argsparser.add_argument("-p", "--prologue", dest="prologue",
+		required=False, metavar="", help="path to a C prologue file")
 	
 	amalgamation = Amalgamation(argsparser.parse_args())
 	amalgamation.generate()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()
 

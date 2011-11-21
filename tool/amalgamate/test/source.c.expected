@@ -1,3 +1,6 @@
+/**
+ * This is a test source prologue file.
+ */
 
 #include <stdlib.h>
 

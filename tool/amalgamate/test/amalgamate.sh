@@ -6,12 +6,14 @@ echo "$0 srcdir=\"${srcdir}\""
 function test_amalgamation {
 	FILE=$1
 	CONFIG_FILE="${srcdir}/${FILE}.json"
+	PROLOGUE_FILE="${srcdir}/${FILE}.prologue"
 	EXPECTED_FILE="${srcdir}/${FILE}.expected"
 	GENERATED_FILE="${FILE}"
 	
 	"${srcdir}/../amalgamate.py" \
 		"--config=${CONFIG_FILE}" \
-		"--source=${srcdir}"
+		"--source=${srcdir}" \
+		"--prologue=${PROLOGUE_FILE}"
 	
 	DIFF=`diff -Nur ${EXPECTED_FILE} ${GENERATED_FILE}`
 	if [ "${DIFF}" ]; then
