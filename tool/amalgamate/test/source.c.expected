@@ -41,8 +41,11 @@ int bar();
 
 const char* include_foo1 = "#include \"foo.h\"";
 const char* include_bar1 = "#include \"bar.h\"";
+const char* include_test1 = "\"#include \"test.h\"\"";
+
 const char* include_foo2 = "#include <foo.h>";
 const char* include_bar2 = "#include <bar.h>";
+const char* include_test2 = "\"#include <test.h>\"";
 
 int main(int argc, char* argv[])
 {
