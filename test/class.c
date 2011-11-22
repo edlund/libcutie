@@ -114,11 +114,9 @@ END_TEST
 static void test_destructor_CheckWidget(Widget* widget)
 {
 	ck_assert(widget->name == NULL);
-	ck_assert(
-		widget->color.r == 0 &&
-		widget->color.g == 0 &&
-		widget->color.b == 0
-	);
+	ck_assert_int_eq(widget->color.r, 0);
+	ck_assert_int_eq(widget->color.g, 0);
+	ck_assert_int_eq(widget->color.b, 0);
 }
 
 START_TEST(test_destructor)
@@ -143,11 +141,9 @@ START_TEST(test_class_callx)
 	class_calln(widget, Widget, Rename, "Widget#2");
 	ck_assert_str_eq(widget->name, "Widget#2");
 	class_calln(widget, Widget, Colorize, 255, 255, 255);
-	ck_assert(
-		widget->color.r == 255 &&
-		widget->color.g == 255 &&
-		widget->color.b == 255
-	);
+	ck_assert_int_eq(widget->color.r, 255);
+	ck_assert_int_eq(widget->color.g, 255);
+	ck_assert_int_eq(widget->color.b, 255);
 	ck_assert(class_call0(widget, Widget, Complexity) == COMPLEXITY_LOW);
 	delete_Object(widget);
 	
@@ -288,7 +284,7 @@ START_TEST(test_class_auto_object)
 	do {
 		class_auto_object0(AutoGizmo, gizmo);
 		ck_assert(autoGizmoInstanceCounter == 1);
-		for (int i = 0; i < 2; ++i) {
+		for (int i = 0; i < 4; ++i) {
 			class_auto_object0(AutoGizmo, nestedGizmo);
 			ck_assert(autoGizmoInstanceCounter == 2);
 		}
