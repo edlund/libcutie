@@ -1,6 +1,8 @@
 
 # cutie - C UTilitIEs
 
+https://github.com/edlund/libcutie
+
 cutie is a minimalistic collection of utilities intended to facilitate object
 oriented programming in C. The following OOP techniques are supported, the idea
 is that they will provide the bare minimum required to comfortably do OOP in C:
@@ -38,6 +40,7 @@ You need the following things to successfully compile cutie:
  * libtool, http://www.gnu.org/software/libtool/
  * Check unit test framework, http://check.sourceforge.net/
  * Python (2.7+), http://www.python.org/
+ * amalgamate.py, https://github.com/edlund/amalgamate
 
 If you plan to use cutie for user space development, configuring, compiling,
 testing and installing cutie can then be as simple as:

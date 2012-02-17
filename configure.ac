@@ -115,9 +115,6 @@ AC_CONFIG_FILES([
 	example/Makefile
 	example/trivial/Makefile
 	test/Makefile
-	tool/Makefile
-	tool/amalgamate/Makefile
-	tool/amalgamate/test/Makefile
 	include/cutie/config.h])
 AC_OUTPUT
 
