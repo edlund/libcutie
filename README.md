@@ -1,7 +1,9 @@
 
 # cutie - C UTilitIEs
 
-https://github.com/edlund/libcutie
+Origin: https://bitbucket.org/erikedlund/libcutie
+
+Mirror: https://github.com/edlund/libcutie
 
 cutie is a minimalistic collection of utilities intended to facilitate object
 oriented programming in C. The following OOP techniques are supported, the idea
